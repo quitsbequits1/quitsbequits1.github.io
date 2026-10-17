@@ -16,6 +16,8 @@
     --pink: #ec4899;
     --text: #ffffff;
     --muted: #888899;
+    --online: #10b981;
+    --offline: #6b7280;
     --ease: cubic-bezier(0.16, 1, 0.3, 1);
   }
 
@@ -36,10 +38,9 @@
     background-size: 50px 50px, 50px 50px, 100% 100%, 100% 100%;
   }
 
-  /* ================= GİRİŞ EKRANI ================= */
+  /* GİRİŞ EKRANI */
   .intro-screen {
-    position: fixed; inset: 0; z-index: 99999;
-    background: #030206;
+    position: fixed; inset: 0; z-index: 99999; background: #030206;
     display: flex; flex-direction: column; justify-content: center; align-items: center;
     text-align: center; padding: 0 5vw;
     transition: opacity 0.8s var(--ease), visibility 0.8s var(--ease);
@@ -48,38 +49,26 @@
   .intro-screen.hidden { opacity: 0; visibility: hidden; }
 
   .intro-text {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: clamp(2rem, 5vw, 4rem);
-    font-weight: 700;
-    line-height: 1.2;
-    letter-spacing: -1px;
-    opacity: 0;
-    transform: translateY(20px);
-    filter: blur(10px);
+    font-family: 'Space Grotesk', sans-serif; font-size: clamp(2rem, 5vw, 4rem);
+    font-weight: 700; line-height: 1.2; letter-spacing: -1px;
+    opacity: 0; transform: translateY(20px); filter: blur(10px);
     animation: fadeUpBlur 1.2s var(--ease) 0.3s forwards;
   }
   
   .intro-text span {
-    display: block;
-    background: linear-gradient(135deg, var(--purple), var(--pink));
+    display: block; background: linear-gradient(135deg, var(--purple), var(--pink));
     -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
     margin-top: 10px;
   }
 
   .intro-hint {
-    margin-top: 40px;
-    font-size: 0.9rem;
-    color: var(--muted);
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    opacity: 0;
-    animation: fadeUpBlur 1.2s var(--ease) 1.5s forwards;
+    margin-top: 40px; font-size: 0.9rem; color: var(--muted);
+    letter-spacing: 2px; text-transform: uppercase;
+    opacity: 0; animation: fadeUpBlur 1.2s var(--ease) 1.5s forwards;
     display: flex; align-items: center; gap: 10px;
   }
   
-  .intro-hint::before, .intro-hint::after {
-    content: ''; display: block; width: 20px; height: 1px; background: var(--muted);
-  }
+  .intro-hint::before, .intro-hint::after { content: ''; display: block; width: 20px; height: 1px; background: var(--muted); }
 
   @keyframes fadeUpBlur {
     0% { opacity: 0; transform: translateY(20px); filter: blur(10px); }
@@ -88,10 +77,8 @@
 
   /* Özel İmleç */
   .cursor {
-    position: fixed; top: 0; left: 0;
-    width: 16px; height: 16px;
-    background: white; border-radius: 50%;
-    transform: translate(-50%, -50%); pointer-events: none;
+    position: fixed; top: 0; left: 0; width: 16px; height: 16px;
+    background: white; border-radius: 50%; transform: translate(-50%, -50%); pointer-events: none;
     z-index: 100000; mix-blend-mode: difference;
     transition: width 0.3s var(--ease), height 0.3s var(--ease), background 0.3s var(--ease);
   }
@@ -103,9 +90,20 @@
     padding: 24px 5vw; display: flex; justify-content: space-between; align-items: center;
     z-index: 100; mix-blend-mode: difference;
   }
-  .logo { font-family: 'Space Grotesk', sans-serif; font-size: 1.3rem; font-weight: 700; letter-spacing: -0.5px; display: flex; align-items: center; gap: 8px; }
-  .logo-dot { width: 8px; height: 8px; background: var(--purple); border-radius: 50%; box-shadow: 0 0 10px var(--purple); }
   
+  .logo-container { display: flex; align-items: center; gap: 12px; }
+  .logo { font-family: 'Space Grotesk', sans-serif; font-size: 1.3rem; font-weight: 700; letter-spacing: -0.5px; }
+  
+  /* Durum Göstergesi (Çevrimiçi / Çevrimdışı) */
+  .status-badge {
+    display: flex; align-items: center; gap: 6px; font-size: 0.75rem; font-weight: 600;
+    padding: 4px 10px; border-radius: 100px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+  }
+  .status-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .status-dot.online { background: var(--online); box-shadow: 0 0 8px var(--online); animation: pulse 2s infinite; }
+  .status-dot.offline { background: var(--offline); }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
+
   .nav-links { display: flex; gap: 30px; align-items: center; }
   .nav-links a { color: var(--text); text-decoration: none; font-size: 0.85rem; font-weight: 500; letter-spacing: 1px; text-transform: uppercase; transition: opacity 0.3s ease; }
   .nav-links a:hover { opacity: 0.5; }
@@ -177,6 +175,7 @@
     .form-row { flex-direction: column; gap: 20px; }
     .info-grid { grid-template-columns: 1fr; }
     .contact-form { padding: 25px; }
+    .status-badge { display: none; } /* Mobilde yer kaplamasın */
   }
 </style>
 </head>
@@ -195,7 +194,14 @@
 
   <!-- Navbar -->
   <nav>
-    <div class="logo">BUĞRAHAN. <div class="logo-dot"></div></div>
+    <div class="logo-container">
+      <div class="logo">BUĞRAHAN.</div>
+      <!-- DURUM GÖSTERGESİ -->
+      <div class="status-badge" id="statusBadge" title="Türkiye Saati (UTC+3)">
+        <div class="status-dot offline" id="statusDot"></div>
+        <span id="statusText">Yükleniyor...</span>
+      </div>
+    </div>
     <div class="nav-links">
       <a href="#about">Hakkımda</a>
       <a href="#contact">Bize Ulaşın</a>
@@ -290,7 +296,44 @@
   </footer>
 
   <script>
-    // --- 1. SİNEMATİK GİRİŞ EKRANI ---
+    // --- 1. TÜRKİYE SAATİNE GÖRE ÇEVRİMİÇİ DURUMU ---
+    function updateStatus() {
+      // Türkiye saati ile şu anki saati ve dakikayı al (UTC+3)
+      const now = new Date();
+      // Tarayıcının yerel saati ile Türkiye saati arasındaki farkı hesapla
+      const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+      const turkeyTime = new Date(utc + (3600000 * 3)); // UTC+3
+      
+      const hours = turkeyTime.getHours();
+      const minutes = turkeyTime.getMinutes();
+      const currentTimeInMinutes = (hours * 60) + minutes;
+
+      // Müsaitlik saatleri: 15:30 - 22:00
+      const startTime = (15 * 60) + 30; // 15:30
+      const endTime = (22 * 60); // 22:00
+
+      const statusBadge = document.getElementById('statusBadge');
+      const statusDot = document.getElementById('statusDot');
+      const statusText = document.getElementById('statusText');
+
+      if (currentTimeInMinutes >= startTime && currentTimeInMinutes <= endTime) {
+        // Çevrimiçi
+        statusDot.className = 'status-dot online';
+        statusText.innerText = 'Çevrimiçi';
+        statusBadge.title = 'Şu an müsait (15:30 - 22:00)';
+      } else {
+        // Çevrimdışı
+        statusDot.className = 'status-dot offline';
+        statusText.innerText = 'Çevrimdışı';
+        statusBadge.title = 'Şu an müsait değil (Müsaitlik: 15:30 - 22:00)';
+      }
+    }
+
+    // Durumu hemen güncelle ve her 30 saniyede bir kontrol et
+    updateStatus();
+    setInterval(updateStatus, 30000);
+
+    // --- 2. SİNEMATİK GİRİŞ EKRANI ---
     const introScreen = document.getElementById('introScreen');
     let introHidden = false;
 
@@ -305,7 +348,7 @@
     setTimeout(() => { if (!introHidden) hideIntro(); }, 5000);
     document.body.style.overflow = 'hidden';
 
-    // --- 2. ÖZEL İMLEÇ ---
+    // --- 3. ÖZEL İMLEÇ ---
     const cursor = document.getElementById('cursor');
     document.addEventListener('mousemove', (e) => {
       cursor.style.left = e.clientX + 'px';
@@ -316,7 +359,7 @@
       el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
     });
 
-    // --- 3. SCROLL REVEAL ---
+    // --- 4. SCROLL REVEAL ---
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
@@ -327,26 +370,23 @@
     }, { threshold: 0.15 });
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-    // --- 4. MESAJ GÖNDERİMİ (KESİN ÇÖZÜM: CORS PROXY KULLANIMI) ---
+    // --- 5. MESAJ GÖNDERİMİ (GARANTİLİ WEBHOOK) ---
     const WEBHOOK_URL = "https://discord.com/api/webhooks/1548760658659647590/gG6FhbX2LFb7euNUUA0FcWpMzEx0TUK52DoMe5X40fNMZCN0AsqxTlOe_GgeMlT7O7-v";
-
     const contactForm = document.getElementById('contactForm');
     const submitBtn = document.getElementById('submitBtn');
     const formStatus = document.getElementById('formStatus');
 
     contactForm.addEventListener('submit', async (e) => {
-      e.preventDefault(); // Sayfa yenilenmesini engelle
+      e.preventDefault();
 
       const name = document.getElementById('name').value;
       const email = document.getElementById('email').value;
       const message = document.getElementById('message').value;
 
-      // Butonu kilitle
       submitBtn.innerText = "Gönderiliyor...";
       submitBtn.disabled = true;
       formStatus.style.display = "none";
 
-      // Discord'a gidecek olan JSON paketi
       const payload = {
         username: "Buğrahan Portfolyo",
         avatar_url: "https://cdn-icons-png.flaticon.com/512/5968/5968756.png",
@@ -364,19 +404,15 @@
       };
 
       try {
-        // ÖNEMLİ: Discord API'sine doğrudan tarayıcıdan istek atmak CORS hatası verir.
-        // Bu yüzden Cloudflare'in resmi CORS Proxy servisi olan corsproxy.io kullanıyoruz.
+        // CORS engelini aşmak için Cloudflare tabanlı proxy kullanıyoruz
         const proxyUrl = "https://corsproxy.io/?";
         
         const response = await fetch(proxyUrl + encodeURIComponent(WEBHOOK_URL), {
           method: "POST",
-          headers: { 
-            "Content-Type": "application/json"
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload)
         });
 
-        // Eğer istek başarılıysa (HTTP 200 veya 204)
         if (response.ok || response.status === 0) {
           formStatus.innerText = "Mesajın başarıyla iletildi! En kısa sürede dönüş yapacağım.";
           formStatus.className = "form-status success";
@@ -390,7 +426,6 @@
         formStatus.innerText = "Bağlantı hatası oluştu. Lütfen tekrar deneyin.";
         formStatus.className = "form-status error";
       } finally {
-        // Butonu eski haline getir
         submitBtn.innerText = "Mesajı Gönder";
         submitBtn.disabled = false;
       }
