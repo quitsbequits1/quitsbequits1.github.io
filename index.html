@@ -110,7 +110,6 @@
   .nav-links a { color: var(--text); text-decoration: none; font-size: 0.85rem; font-weight: 500; letter-spacing: 1px; text-transform: uppercase; transition: opacity 0.3s ease; }
   .nav-links a:hover { opacity: 0.5; }
   
-  /* Instagram İkonu */
   .insta-icon { display: flex; align-items: center; justify-content: center; transition: transform 0.3s ease; }
   .insta-icon:hover { transform: scale(1.1); opacity: 1 !important; }
   .insta-icon svg { width: 20px; height: 20px; fill: var(--text); }
@@ -200,7 +199,6 @@
     <div class="nav-links">
       <a href="#about">Hakkımda</a>
       <a href="#contact">Bize Ulaşın</a>
-      <!-- Navbardaki Instagram İkonu -->
       <a href="https://instagram.com/bu9r44" target="_blank" class="insta-icon" title="Instagram: @bu9r44">
         <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
       </a>
@@ -284,7 +282,6 @@
   <footer>
     <div>© 2026 — Buğrahan. Tüm Hakları Saklıdır.</div>
     <div>
-      <!-- Footer Instagram İkonu ve Linki -->
       <a href="https://instagram.com/bu9r44" target="_blank" class="footer-insta">
         <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
         @bu9r44
@@ -293,7 +290,7 @@
   </footer>
 
   <script>
-    // --- 1. SİNEMATİK GİRİŞ EKRANI MANTIĞI ---
+    // --- 1. SİNEMATİK GİRİŞ EKRANI ---
     const introScreen = document.getElementById('introScreen');
     let introHidden = false;
 
@@ -301,19 +298,11 @@
       if (introHidden) return;
       introHidden = true;
       introScreen.classList.add('hidden');
-      // Giriş ekranı kapandıktan sonra scroll'u aktif et
       document.body.style.overflow = 'auto';
     }
 
-    // Ekrana tıklandığında hızlıca geçiş yap
     introScreen.addEventListener('click', hideIntro);
-
-    // Kullanıcı beklemezse 5 saniye sonra otomatik geç (güvenlik)
-    setTimeout(() => {
-      if (!introHidden) hideIntro();
-    }, 5000);
-
-    // Başlangıçta giriş ekranı açıkken scroll'u kilitle
+    setTimeout(() => { if (!introHidden) hideIntro(); }, 5000);
     document.body.style.overflow = 'hidden';
 
     // --- 2. ÖZEL İMLEÇ ---
@@ -338,54 +327,26 @@
     }, { threshold: 0.15 });
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-    // --- 4. YEDEKLİ WEBHOOK GÖNDERİMİ (GARANTİLİ) ---
+    // --- 4. MESAJ GÖNDERİMİ (KESİN ÇÖZÜM: CORS PROXY KULLANIMI) ---
     const WEBHOOK_URL = "https://discord.com/api/webhooks/1548760658659647590/gG6FhbX2LFb7euNUUA0FcWpMzEx0TUK52DoMe5X40fNMZCN0AsqxTlOe_GgeMlT7O7-v";
 
     const contactForm = document.getElementById('contactForm');
     const submitBtn = document.getElementById('submitBtn');
     const formStatus = document.getElementById('formStatus');
 
-    async function sendPayload(payload) {
-      // 1. Yöntem: Doğrudan Gönderim
-      try {
-        await fetch(WEBHOOK_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-          mode: "no-cors"
-        });
-        return true;
-      } catch (err) {
-        console.warn("Doğrudan gönderim başarısız, proxy deneniyor...");
-      }
-
-      // 2. Yöntem: Proxy Üzerinden Gönderim (HTML düz açılsa bile çalışır)
-      try {
-        const proxyUrl = "https://api.allorigins.win/raw?url=";
-        await fetch(proxyUrl + encodeURIComponent(WEBHOOK_URL), {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
-        });
-        return true;
-      } catch (err) {
-        console.error("Proxy gönderimi de başarısız oldu:", err);
-        return false;
-      }
-    }
-
     contactForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
+      e.preventDefault(); // Sayfa yenilenmesini engelle
 
       const name = document.getElementById('name').value;
       const email = document.getElementById('email').value;
       const message = document.getElementById('message').value;
 
+      // Butonu kilitle
       submitBtn.innerText = "Gönderiliyor...";
       submitBtn.disabled = true;
-      formStatus.className = "form-status";
       formStatus.style.display = "none";
 
+      // Discord'a gidecek olan JSON paketi
       const payload = {
         username: "Buğrahan Portfolyo",
         avatar_url: "https://cdn-icons-png.flaticon.com/512/5968/5968756.png",
@@ -398,23 +359,41 @@
             { name: "Mesaj", value: message, inline: false }
           ],
           timestamp: new Date().toISOString(),
-          footer: { text: "Kişisel Portfolyo İletişim Formu" }
+          footer: { text: "Kişisel Portfolyo" }
         }]
       };
 
-      const isSuccess = await sendPayload(payload);
+      try {
+        // ÖNEMLİ: Discord API'sine doğrudan tarayıcıdan istek atmak CORS hatası verir.
+        // Bu yüzden Cloudflare'in resmi CORS Proxy servisi olan corsproxy.io kullanıyoruz.
+        const proxyUrl = "https://corsproxy.io/?";
+        
+        const response = await fetch(proxyUrl + encodeURIComponent(WEBHOOK_URL), {
+          method: "POST",
+          headers: { 
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(payload)
+        });
 
-      if (isSuccess) {
-        formStatus.innerText = "Mesajın başarıyla iletildi! En kısa sürede dönüş yapacağım.";
-        formStatus.className = "form-status success";
-        contactForm.reset();
-      } else {
-        formStatus.innerText = "Bağlantı hatası oluştu. Lütfen internetini kontrol edip tekrar dene.";
+        // Eğer istek başarılıysa (HTTP 200 veya 204)
+        if (response.ok || response.status === 0) {
+          formStatus.innerText = "Mesajın başarıyla iletildi! En kısa sürede dönüş yapacağım.";
+          formStatus.className = "form-status success";
+          contactForm.reset();
+        } else {
+          throw new Error("Sunucu yanıt vermedi.");
+        }
+
+      } catch (error) {
+        console.error("Gönderim Hatası:", error);
+        formStatus.innerText = "Bağlantı hatası oluştu. Lütfen tekrar deneyin.";
         formStatus.className = "form-status error";
+      } finally {
+        // Butonu eski haline getir
+        submitBtn.innerText = "Mesajı Gönder";
+        submitBtn.disabled = false;
       }
-
-      submitBtn.innerText = "Mesajı Gönder";
-      submitBtn.disabled = false;
     });
   </script>
 
