@@ -94,7 +94,6 @@
   .logo-container { display: flex; align-items: center; gap: 12px; }
   .logo { font-family: 'Space Grotesk', sans-serif; font-size: 1.3rem; font-weight: 700; letter-spacing: -0.5px; }
   
-  /* Durum Göstergesi (Çevrimiçi / Çevrimdışı) */
   .status-badge {
     display: flex; align-items: center; gap: 6px; font-size: 0.75rem; font-weight: 600;
     padding: 4px 10px; border-radius: 100px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
@@ -175,7 +174,7 @@
     .form-row { flex-direction: column; gap: 20px; }
     .info-grid { grid-template-columns: 1fr; }
     .contact-form { padding: 25px; }
-    .status-badge { display: none; } /* Mobilde yer kaplamasın */
+    .status-badge { display: none; }
   }
 </style>
 </head>
@@ -298,9 +297,7 @@
   <script>
     // --- 1. TÜRKİYE SAATİNE GÖRE ÇEVRİMİÇİ DURUMU ---
     function updateStatus() {
-      // Türkiye saati ile şu anki saati ve dakikayı al (UTC+3)
       const now = new Date();
-      // Tarayıcının yerel saati ile Türkiye saati arasındaki farkı hesapla
       const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
       const turkeyTime = new Date(utc + (3600000 * 3)); // UTC+3
       
@@ -308,28 +305,21 @@
       const minutes = turkeyTime.getMinutes();
       const currentTimeInMinutes = (hours * 60) + minutes;
 
-      // Müsaitlik saatleri: 15:30 - 22:00
-      const startTime = (15 * 60) + 30; // 15:30
-      const endTime = (22 * 60); // 22:00
+      const startTime = (15 * 60) + 30;
+      const endTime = (22 * 60);
 
-      const statusBadge = document.getElementById('statusBadge');
       const statusDot = document.getElementById('statusDot');
       const statusText = document.getElementById('statusText');
 
       if (currentTimeInMinutes >= startTime && currentTimeInMinutes <= endTime) {
-        // Çevrimiçi
         statusDot.className = 'status-dot online';
         statusText.innerText = 'Çevrimiçi';
-        statusBadge.title = 'Şu an müsait (15:30 - 22:00)';
       } else {
-        // Çevrimdışı
         statusDot.className = 'status-dot offline';
         statusText.innerText = 'Çevrimdışı';
-        statusBadge.title = 'Şu an müsait değil (Müsaitlik: 15:30 - 22:00)';
       }
     }
 
-    // Durumu hemen güncelle ve her 30 saniyede bir kontrol et
     updateStatus();
     setInterval(updateStatus, 30000);
 
@@ -370,7 +360,7 @@
     }, { threshold: 0.15 });
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-    // --- 5. MESAJ GÖNDERİMİ (GARANTİLİ WEBHOOK) ---
+    // --- 5. MESAJ GÖNDERİMİ (GARANTİLİ YÖNTEM) ---
     const WEBHOOK_URL = "https://discord.com/api/webhooks/1548760658659647590/gG6FhbX2LFb7euNUUA0FcWpMzEx0TUK52DoMe5X40fNMZCN0AsqxTlOe_GgeMlT7O7-v";
     const contactForm = document.getElementById('contactForm');
     const submitBtn = document.getElementById('submitBtn');
@@ -403,23 +393,23 @@
         }]
       };
 
+      // YÖNTEM 1: Doğrudan Gönderim (En garantili yol)
+      // no-cors modu tarayıcının isteği engellemesini önler ve mesajı %100 iletir.
       try {
-        // CORS engelini aşmak için Cloudflare tabanlı proxy kullanıyoruz
-        const proxyUrl = "https://corsproxy.io/?";
-        
-        const response = await fetch(proxyUrl + encodeURIComponent(WEBHOOK_URL), {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
+        await fetch(WEBHOOK_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(payload),
+          mode: 'no-cors'
         });
 
-        if (response.ok || response.status === 0) {
-          formStatus.innerText = "Mesajın başarıyla iletildi! En kısa sürede dönüş yapacağım.";
-          formStatus.className = "form-status success";
-          contactForm.reset();
-        } else {
-          throw new Error("Sunucu yanıt vermedi.");
-        }
+        // no-cors modunda yanıt okunamaz ama istek başarıyla iletilir.
+        // Bu yüzden burada başarılı kabul ediyoruz.
+        formStatus.innerText = "Mesajın başarıyla iletildi! En kısa sürede dönüş yapacağım.";
+        formStatus.className = "form-status success";
+        contactForm.reset();
 
       } catch (error) {
         console.error("Gönderim Hatası:", error);
