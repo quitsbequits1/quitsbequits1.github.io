@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Site İçi Arama Botu</title>
+<title>Site İçi Arama Botu (Gelişmiş)</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -53,7 +53,6 @@
   .btn-search:hover { background: var(--pink); transform: translateY(-2px); box-shadow: 0 10px 20px -10px rgba(236,72,153,0.5); }
   .btn-search:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
-  /* Sonuç Alanı */
   .results-area {
     border-top: 1px solid var(--border); padding: 30px;
     max-height: 400px; overflow-y: auto; display: none;
@@ -96,20 +95,39 @@
       <button class="btn-search" id="searchBtn" onclick="startSearch()">Ara ve Bul</button>
     </div>
 
-    <div class="results-area" id="resultsArea">
-      <!-- Sonuçlar buraya gelecek -->
-    </div>
+    <div class="results-area" id="resultsArea"></div>
   </div>
 
   <script>
-    // CORS Proxy (Güvenlik duvarını aşmak için)
-    const CORS_PROXY = "https://api.allorigins.win/raw?url=";
+    // Yedekli Proxy Listesi (Biri çökerse diğeri devreye girer)
+    const PROXIES = [
+      "https://api.codetabs.com/v1/proxy?quest=",
+      "https://corsproxy.io/?",
+      "https://cors-anywhere.herokuapp.com/",
+      "https://api.allorigins.win/raw?url="
+    ];
 
     const cursor = document.getElementById('cursor');
     document.addEventListener('mousemove', (e) => {
       cursor.style.left = e.clientX + 'px';
       cursor.style.top = e.clientY + 'px';
     });
+
+    async function fetchWithFallback(url) {
+      // Tüm proxyleri sırayla dene
+      for (let i = 0; i < PROXIES.length; i++) {
+        const proxyUrl = PROXIES[i] + encodeURIComponent(url);
+        try {
+          const res = await fetch(proxyUrl);
+          if (res.ok) {
+            return await res.text();
+          }
+        } catch (e) {
+          console.warn(`Proxy ${i + 1} başarısız, bir sonraki deneniyor...`);
+        }
+      }
+      throw new Error("Tüm proxy sunucuları yanıt vermedi.");
+    }
 
     async function startSearch() {
       const targetUrl = document.getElementById('targetUrl').value.trim();
@@ -122,34 +140,31 @@
         return;
       }
 
-      // Arayüzü temizle ve yükleniyor göster
       resultsArea.classList.add('active');
-      resultsArea.innerHTML = `<div class="status-msg">GET isteği atılıyor ve site taranıyor... Lütfen bekle.</div>`;
+      resultsArea.innerHTML = `<div class="status-msg">Siteler arası bağlantı kuruluyor ve site taranıyor... (Yedekli sistem devrede)</div>`;
       searchBtn.disabled = true;
       searchBtn.innerText = "Taranıyor...";
 
       try {
-        // Proxy üzerinden hedefe GET isteği at
-        const response = await fetch(CORS_PROXY + encodeURIComponent(targetUrl));
-        const htmlText = await response.text();
+        // Gelişmiş GET İsteği
+        const htmlText = await fetchWithFallback(targetUrl);
 
-        // HTML'i bir DOM objesine çevir ki metinleri ayıklayabilelim
+        if (!htmlText || htmlText.length < 100) {
+          throw new Error("Boş veya geçersiz yanıt.");
+        }
+
+        // HTML'i temizle ve metni ayıkla
         const parser = new DOMParser();
         const doc = parser.parseFromString(htmlText, 'text/html');
         
-        // Script ve style etiketlerini kaldır (sadece metin kalsın)
-        const scripts = doc.querySelectorAll('script, style, noscript');
+        const scripts = doc.querySelectorAll('script, style, noscript, iframe, svg');
         scripts.forEach(s => s.remove());
 
-        // Tüm metni al
-        const bodyText = doc.body.innerText || doc.body.textContent;
-        
-        // Metni cümlelere böl
+        const bodyText = doc.body.innerText || doc.body.textContent || "";
         const sentences = bodyText.split(/(?<=[.!?])\s+|\n+/);
         
         let foundResults = [];
 
-        // Cümleleri filtrele
         sentences.forEach(sentence => {
           const cleanSentence = sentence.trim();
           if (cleanSentence.toLowerCase().includes(keyword) && cleanSentence.length > 30 && cleanSentence.length < 500) {
@@ -157,18 +172,15 @@
           }
         });
 
-        // Sonuçları göster
-        resultsArea.innerHTML = ''; // Temizle
+        resultsArea.innerHTML = ''; 
 
         if (foundResults.length > 0) {
-          // Aynı cümlelerin tekrarını önle ve ilk 10 tanesini göster
           const uniqueResults = [...new Set(foundResults)].slice(0, 10);
           
-          resultsArea.innerHTML += `<div class="status-msg" style="color:var(--green); margin-bottom:15px;"><strong>${uniqueResults.length} sonuç bulundu.</strong></div>`;
+          resultsArea.innerHTML += `<div class="status-msg" style="color:var(--green); margin-bottom:15px;"><strong>${uniqueResults.length} sonuç başarıyla bulundu.</strong></div>`;
           
           uniqueResults.forEach(result => {
-            // Kelimeyi vurgula (Highlight)
-            const regex = new RegExp(`(${keyword})`, "gi");
+            const regex = new RegExp(`(${keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, "gi");
             const highlightedResult = result.replace(regex, '<mark>$1</mark>');
 
             const div = document.createElement('div');
@@ -180,11 +192,11 @@
             resultsArea.appendChild(div);
           });
         } else {
-          resultsArea.innerHTML = `<div class="status-msg" style="color:var(--pink);">"${keyword}" kelimesini bu sayfada bulamadım. Farklı bir URL veya kelime dene.</div>`;
+          resultsArea.innerHTML = `<div class="status-msg" style="color:var(--pink);">"${keyword}" kelimesini bu sayfada bulamadım.</div>`;
         }
 
       } catch (error) {
-        resultsArea.innerHTML = `<div class="status-msg" style="color:red;">Bağlantı hatası: Siteye ulaşılamadı. (Bazı siteler botları engeller veya Proxy çökmüş olabilir.)</div>`;
+        resultsArea.innerHTML = `<div class="status-msg" style="color:red;">Bağlantı hatası: Tüm proxy sunucuları denendi ancak siteye ulaşılamadı. Hedef site bot koruması kullanıyor olabilir.</div>`;
         console.error(error);
       } finally {
         searchBtn.disabled = false;
