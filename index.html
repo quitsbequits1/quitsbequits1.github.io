@@ -3,170 +3,349 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gelişmiş Arama Motoru — Buğrahan</title>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<title>Buğrahan — Halloween Edition</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Creepster&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #050508; --surface: rgba(15, 15, 22, 0.8); --border: rgba(255,255,255,0.08);
-    --purple: #a855f7; --pink: #ec4899; --text: #fff; --muted: #888899;
-    --green: #10b981;
+    --bg: #080202; /* Kanlı siyah */
+    --surface: rgba(20, 5, 5, 0.6);
+    --border: rgba(255, 50, 50, 0.15);
+    --red: #dc2626; /* Kızıl */
+    --orange: #ea580c; /* Cadılar bayramı turuncusu */
+    --text: #f5f5f5;
+    --muted: #a19999;
+    --online: #10b981;
+    --offline: #6b7280;
+    --ease: cubic-bezier(0.16, 1, 0.3, 1);
   }
+
   * { margin: 0; padding: 0; box-sizing: border-box; cursor: none; }
+  html { scroll-behavior: smooth; background: var(--bg); }
+
   body {
-    background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif;
-    min-height: 100vh; display: flex; justify-content: center; align-items: flex-start; padding: 40px 20px;
-    background-image: radial-gradient(circle at 50% 50%, rgba(168,85,247,0.05), transparent 50%);
+    font-family: 'Inter', sans-serif;
+    color: var(--text);
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    background-color: var(--bg);
+    background-image: 
+      radial-gradient(circle at 15% 50%, rgba(220, 38, 38, 0.08), transparent 40%),
+      radial-gradient(circle at 85% 30%, rgba(234, 88, 12, 0.08), transparent 40%);
   }
-  .cursor { position: fixed; top:0; left:0; width:10px; height:10px; background:var(--purple); border-radius:50%; pointer-events:none; z-index:99999; transform:translate(-50%,-50%); box-shadow:0 0 10px var(--purple); }
-  
-  .container {
-    width: 100%; max-width: 900px;
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 24px; backdrop-filter: blur(20px);
-    box-shadow: 0 30px 60px -20px rgba(0,0,0,0.8);
-    display: flex; flex-direction: column; overflow: hidden;
-  }
-  
-  .header {
-    padding: 30px; text-align: center; border-bottom: 1px solid var(--border);
-    background: rgba(0,0,0,0.3);
-  }
-  .header h1 { font-family: 'Space Grotesk', sans-serif; font-size: 2rem; background: linear-gradient(135deg, #fff, var(--purple)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
-  .header p { color: var(--muted); font-size: 0.95rem; margin-top: 5px; }
 
-  .search-panel { padding: 30px; }
+  /* ================= GİRİŞ EKRANI ================= */
+  .intro-screen {
+    position: fixed; inset: 0; z-index: 99999; background: #000;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    text-align: center; padding: 0 5vw;
+    transition: opacity 1.5s var(--ease), visibility 1.5s var(--ease);
+    cursor: pointer;
+  }
+  .intro-screen.hidden { opacity: 0; visibility: hidden; }
+
+  .intro-text {
+    font-family: 'Creepster', cursive; /* Ürkütücü Font */
+    font-size: clamp(3rem, 8vw, 7rem);
+    font-weight: 400; line-height: 1.1; letter-spacing: 2px;
+    color: var(--red);
+    text-shadow: 0 0 20px rgba(220, 38, 38, 0.6), 0 0 40px rgba(220, 38, 38, 0.3);
+    opacity: 0; transform: translateY(30px); filter: blur(10px);
+    animation: fadeUpBlur 1.5s var(--ease) 0.5s forwards;
+  }
+  .intro-text span {
+    display: block; 
+    color: var(--orange);
+    text-shadow: 0 0 20px rgba(234, 88, 12, 0.6);
+    margin-top: 10px;
+  }
+  .intro-hint {
+    margin-top: 50px; font-size: 0.9rem; color: var(--muted);
+    letter-spacing: 3px; text-transform: uppercase; font-family: 'Space Grotesk', sans-serif;
+    opacity: 0; animation: fadeUpBlur 1.5s var(--ease) 1.5s forwards;
+    display: flex; align-items: center; gap: 15px;
+  }
+  .intro-hint::before, .intro-hint::after { content: ''; display: block; width: 30px; height: 1px; background: rgba(220, 38, 38, 0.4); }
+  @keyframes fadeUpBlur {
+    0% { opacity: 0; transform: translateY(30px); filter: blur(10px); }
+    100% { opacity: 1; transform: translateY(0); filter: blur(0); }
+  }
+
+  /* Özel İmleç (Kan Lekesi) */
+  .cursor {
+    position: fixed; top: 0; left: 0; width: 14px; height: 14px;
+    background: var(--red); border-radius: 50%; transform: translate(-50%, -50%); pointer-events: none;
+    z-index: 100000; mix-blend-mode: screen;
+    box-shadow: 0 0 15px var(--red);
+    transition: width 0.4s var(--ease), height 0.4s var(--ease), background 0.4s var(--ease);
+  }
+  .cursor.hover { width: 50px; height: 50px; background: var(--orange); box-shadow: 0 0 30px var(--orange); }
+
+  /* Navbar */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    padding: 24px 5vw; display: flex; justify-content: space-between; align-items: center;
+    z-index: 100; mix-blend-mode: difference;
+  }
+  .logo-container { display: flex; align-items: center; gap: 16px; }
+  .logo { font-family: 'Creepster', cursive; font-size: 1.8rem; font-weight: 400; letter-spacing: 1px; color: var(--red); }
   
-  .search-box {
-    display: flex; gap: 10px;
+  .status-badge {
+    display: flex; align-items: center; gap: 8px; font-size: 0.75rem; font-weight: 600;
+    padding: 6px 14px; border-radius: 100px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+    font-family: 'Space Grotesk', sans-serif;
   }
-  .search-box input { 
-    flex: 1; padding: 20px 24px; background: rgba(0,0,0,0.4); border: 1px solid var(--border);
-    border-radius: 16px; color: #fff; font-family: 'Inter', sans-serif; font-size: 1.1rem; outline: none; transition: 0.3s;
-  }
-  .search-box input:focus { border-color: var(--purple); background: rgba(168,85,247,0.05); }
+  .status-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .status-dot.online { background: var(--online); box-shadow: 0 0 12px var(--online); animation: pulse 2s infinite; }
+  .status-dot.offline { background: var(--offline); }
+  @keyframes pulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(0.8); } }
+
+  .nav-links { display: flex; gap: 40px; align-items: center; }
+  .nav-links a { color: var(--text); text-decoration: none; font-size: 0.85rem; font-weight: 500; letter-spacing: 1px; text-transform: uppercase; transition: color 0.3s ease; font-family: 'Space Grotesk', sans-serif;}
+  .nav-links a:hover { color: var(--red); }
+
+  /* Hero */
+  .hero { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; padding: 0 5vw; position: relative; }
+  .hero-subtitle { font-family: 'Space Grotesk', sans-serif; font-size: 1rem; color: var(--red); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 24px; display: flex; align-items: center; gap: 15px; }
+  .hero-subtitle::before { content: ''; display: block; width: 40px; height: 2px; background: var(--red); }
   
-  .search-box button {
-    padding: 0 40px; background: var(--purple); color: #fff; 
-    border: none; border-radius: 16px; font-family: 'Space Grotesk', sans-serif; 
-    font-size: 1.1rem; font-weight: 700; cursor: pointer; transition: 0.3s;
-  }
-  .search-box button:hover { background: var(--pink); transform: translateY(-2px); box-shadow: 0 10px 20px -10px rgba(236,72,153,0.5); }
-  .search-box button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+  h1 { font-family: 'Space Grotesk', sans-serif; font-size: clamp(3.5rem, 11vw, 10rem); font-weight: 700; line-height: 0.9; letter-spacing: -0.05em; margin-bottom: 40px; text-transform: uppercase; }
+  h1 span { display: block; background: linear-gradient(135deg, var(--red), var(--orange)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; padding-bottom: 15px; text-shadow: 0 0 30px rgba(220,38,38,0.2); }
+  .hero-desc { max-width: 550px; font-size: 1.2rem; color: var(--muted); line-height: 1.7; font-weight: 300; }
 
-  .results-area {
-    padding: 0 30px 30px 30px; display: none;
-  }
-  .results-area.active { display: block; }
+  /* Ben Kimim */
+  .about-section { padding: 120px 5vw; max-width: 1200px; margin: 0 auto; }
+  .section-label { font-family: 'Space Grotesk', sans-serif; font-size: 0.9rem; color: var(--orange); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 24px; }
+  .about-title { font-family: 'Space Grotesk', sans-serif; font-size: clamp(2rem, 5vw, 4rem); font-weight: 600; letter-spacing: -0.04em; line-height: 1.1; margin-bottom: 40px; }
+  .about-text { font-size: 1.3rem; color: #ddd; line-height: 1.8; max-width: 850px; font-weight: 300; margin-bottom: 60px; }
+  .about-text strong { color: var(--red); font-weight: 600; }
 
-  .result-item {
-    background: rgba(255,255,255,0.02); border: 1px solid var(--border);
-    border-radius: 16px; padding: 24px; margin-bottom: 15px;
-    transition: transform 0.2s, border-color 0.2s;
+  .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; }
+  .info-card { 
+    background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 40px; 
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); 
+    transition: transform 0.5s var(--ease), border-color 0.5s var(--ease), box-shadow 0.5s var(--ease); 
   }
-  .result-item:hover {
-    transform: translateY(-2px); border-color: rgba(168,85,247,0.4);
+  .info-card:hover { transform: translateY(-8px); border-color: rgba(220, 38, 38, 0.6); box-shadow: 0 20px 40px -20px rgba(220, 38, 38, 0.4); }
+  .info-card-label { font-size: 0.85rem; color: var(--muted); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 12px; font-family: 'Space Grotesk', sans-serif;}
+  .info-card-value { font-family: 'Space Grotesk', sans-serif; font-size: 1.8rem; font-weight: 600; color: #fff; }
+  .tags { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px; }
+  .tag { 
+    background: rgba(220, 38, 38, 0.1); color: var(--red); 
+    padding: 8px 16px; border-radius: 8px; font-size: 0.9rem; font-weight: 500; 
+    border: 1px solid rgba(220, 38, 38, 0.2); transition: all 0.3s ease; 
   }
-  .result-item h3 { color: var(--purple); font-size: 1.2rem; margin-bottom: 10px; font-family: 'Space Grotesk', sans-serif; }
-  .result-snippet { color: #ccc; font-size: 0.95rem; line-height: 1.6; margin-bottom: 15px; }
-  .result-snippet mark { background: var(--purple); color: #fff; padding: 0 6px; border-radius: 4px; font-weight: bold; }
-  
-  .result-link {
-    display: inline-block; color: var(--green); text-decoration: none; font-weight: 500; font-size: 0.9rem;
-  }
-  .result-link:hover { text-decoration: underline; }
+  .tag:hover { background: var(--red); color: #fff; transform: scale(1.05); }
 
-  .status-msg { text-align: center; color: var(--muted); font-size: 1rem; padding: 40px 0; }
+  /* İletişim (Sadece Instagram Butonu) */
+  .contact-section { padding: 150px 5vw; max-width: 900px; margin: 0 auto; text-align: center; }
+  .contact-title { font-family: 'Space Grotesk', sans-serif; font-size: clamp(2.5rem, 6vw, 4.5rem); font-weight: 700; letter-spacing: -0.04em; margin-bottom: 24px; line-height: 1.1; }
+  .contact-title span { background: linear-gradient(135deg, var(--red), var(--orange)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+  .contact-desc { color: var(--muted); margin-bottom: 60px; font-size: 1.2rem; font-weight: 300; }
 
-  @media (max-width: 600px) {
-    .search-box { flex-direction: column; }
-    .search-box button { padding: 18px; }
+  /* Devasa Instagram Butonu */
+  .insta-btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 16px;
+    padding: 24px 60px; background: transparent; color: #fff;
+    border: 2px solid var(--red); border-radius: 100px; font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.2rem; font-weight: 700; text-decoration: none;
+    transition: all 0.4s var(--ease); position: relative; overflow: hidden;
+    box-shadow: 0 0 20px rgba(220, 38, 38, 0.2);
+  }
+  .insta-btn::before {
+    content: ''; position: absolute; inset: 0;
+    background: var(--red);
+    opacity: 0; transition: opacity 0.4s var(--ease); z-index: 1;
+  }
+  .insta-btn:hover { transform: translateY(-5px) scale(1.02); box-shadow: 0 20px 50px -10px rgba(220, 38, 38, 0.6); }
+  .insta-btn:hover::before { opacity: 1; }
+  .insta-btn svg, .insta-btn span { position: relative; z-index: 2; transition: transform 0.4s var(--ease); }
+  .insta-btn:hover svg { transform: rotate(15deg) scale(1.1); }
+  .insta-btn svg { width: 28px; height: 28px; fill: currentColor; }
+
+  /* Footer */
+  footer { padding: 40px 5vw; display: flex; justify-content: space-between; align-items: center; color: var(--muted); font-size: 0.9rem; border-top: 1px solid var(--border); background: rgba(0, 0, 0, 0.4); }
+
+  .reveal { opacity: 0; transform: translateY(40px); transition: all 1.2s var(--ease); }
+  .reveal.active { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 768px) {
+    * { cursor: auto; }
+    .cursor { display: none; }
+    .nav-links { display: none; }
+    .info-grid { grid-template-columns: 1fr; }
+    .status-badge { display: none; }
+    .insta-btn { padding: 20px 40px; font-size: 1.1rem; width: 100%; }
   }
 </style>
 </head>
 <body>
 
-  <div class="cursor" id="cursor"></div>
-
-  <div class="container">
-    <div class="header">
-      <h1>Web Arama Botu</h1>
-      <p>Anahtar kelimeni yaz, internetteki en güncel veriyi bul.</p>
-    </div>
-
-    <div class="search-panel">
-      <div class="search-box">
-        <input type="text" id="searchInput" placeholder="Aramak istediğin kelimeyi yaz..." onkeypress="handleEnter(event)">
-        <button id="searchBtn" onclick="startSearch()">Ara</button>
-      </div>
-    </div>
-
-    <div class="results-area" id="resultsArea"></div>
+  <!-- GİRİŞ EKRANI -->
+  <div class="intro-screen" id="introScreen">
+    <div class="intro-text">Ölüler Diyarına Hoş Geldin<span>Devam etmek için tıkla...</span></div>
+    <div class="intro-hint">KORKMA, SADECE BİR PORTFOLYO</div>
   </div>
 
+  <div class="cursor" id="cursor"></div>
+
+  <!-- Navbar -->
+  <nav>
+    <div class="logo-container">
+      <div class="logo">Buğrahan.</div>
+      <div class="status-badge" id="statusBadge" title="Türkiye Saati (UTC+3)">
+        <div class="status-dot offline" id="statusDot"></div>
+        <span id="statusText">Yükleniyor...</span>
+      </div>
+    </div>
+    <div class="nav-links">
+      <a href="#about">Hakkımda</a>
+      <a href="#contact">İletişim</a>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-subtitle reveal">Dijital Geliştirici & Tasarımcı</div>
+    <h1 class="reveal">Merhaba,<br><span>Ben Buğrahan.</span></h1>
+    <p class="hero-desc reveal">
+      16 yaşındayım. Script geliştirme, tersine mühendislik, web tasarımı ve oyun içi sistemler üzerine kafa yoruyorum.
+    </p>
+  </section>
+
+  <!-- Ben Kimim -->
+  <section class="about-section" id="about">
+    <div class="section-label reveal">Ben Kimim?</div>
+    <h2 class="about-title reveal">Sınırları Zorlayan Bir Zihin.</h2>
+    <p class="about-text reveal">
+      Ben bir <strong>script kod geliştiricisi, tasarımcı ve reverse engineer</strong>'ım. 
+      Oyun mekaniklerini anlamak, sistemleri tersine mühendislikle çözmek ve bunları en modern şekilde koda dökmek benim tutkum. 
+      Tasarım tarafında ise sadece çalışan değil, göze hitap eden ve akıcı hissettiren işler çıkarmayı seviyorum. 
+      Boş zamanlarımda Roblox ve Clash Royale oynuyor, oyun içi dinamikleri analiz ediyorum.
+    </p>
+
+    <div class="info-grid">
+      <div class="info-card reveal">
+        <div class="info-card-label">Yaş</div>
+        <div class="info-card-value">16</div>
+      </div>
+      <div class="info-card reveal">
+        <div class="info-card-label">Müsait Olduğum Saatler</div>
+        <div class="info-card-value">15:30 — 22:00</div>
+      </div>
+      <div class="info-card reveal">
+        <div class="info-card-label">Aktif Oyunlar</div>
+        <div class="tags">
+          <span class="tag">Roblox</span>
+          <span class="tag">Clash Royale</span>
+        </div>
+      </div>
+      <div class="info-card reveal">
+        <div class="info-card-label">Uzmanlık Alanlarım</div>
+        <div class="tags">
+          <span class="tag">Script</span>
+          <span class="tag">Reverse Eng.</span>
+          <span class="tag">Web Tasarım</span>
+          <span class="tag">Oyun Sistemleri</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- İletişim (Sadece Instagram) -->
+  <section class="contact-section" id="contact">
+    <h2 class="contact-title reveal">Bana <span>Ulaş.</span></h2>
+    <p class="contact-desc reveal">Projeler, iş birlikleri veya sadece merhaba demek için Instagram'dan yazabilirsin. En hızlı buradan dönüş yapıyorum.</p>
+
+    <a href="https://instagram.com/bu9r44" target="_blank" rel="noopener noreferrer" class="insta-btn reveal">
+      <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+      <span>@bu9r44</span>
+    </a>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div>© 2026 — Buğrahan. Tüm Hakları Saklıdır.</div>
+    <div>Happy Halloween 🎃</div>
+  </footer>
+
+  <!-- SES EFEKTİ (Karanlık Rüzgar / Gıcırtı) -->
+  <audio id="halloweenSound" loop>
+    <!-- Ücretsiz bir korku sesi URL'si -->
+    <source src="https://www.soundjay.com/halloween/sounds/creepy-wind-01.mp3" type="audio/mpeg">
+  </audio>
+
   <script>
+    // --- 1. TÜRKİYE SAATİNE GÖRE ÇEVRİMİÇİ DURUMU ---
+    function updateStatus() {
+      const now = new Date();
+      const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+      const turkeyTime = new Date(utc + (3600000 * 3));
+      
+      const hours = turkeyTime.getHours();
+      const minutes = turkeyTime.getMinutes();
+      const currentTimeInMinutes = (hours * 60) + minutes;
+
+      const startTime = (15 * 60) + 30;
+      const endTime = (22 * 60);
+
+      const statusDot = document.getElementById('statusDot');
+      const statusText = document.getElementById('statusText');
+
+      if (currentTimeInMinutes >= startTime && currentTimeInMinutes <= endTime) {
+        statusDot.className = 'status-dot online';
+        statusText.innerText = 'Çevrimiçi';
+      } else {
+        statusDot.className = 'status-dot offline';
+        statusText.innerText = 'Çevrimdışı';
+      }
+    }
+    updateStatus();
+    setInterval(updateStatus, 30000);
+
+    // --- 2. GİRİŞ EKRANI VE SES ---
+    const introScreen = document.getElementById('introScreen');
+    const spookySound = document.getElementById('halloweenSound');
+    let introHidden = false;
+
+    function hideIntro() {
+      if (introHidden) return;
+      introHidden = true;
+      
+      // Sesi başlat (Tarayıcılar sadece tıklama ile sese izin verir)
+      spookySound.volume = 0.4; // Ses seviyesi (0.0 - 1.0)
+      spookySound.play().catch(e => console.log("Ses çalınamadı:", e));
+
+      introScreen.classList.add('hidden');
+      document.body.style.overflow = 'auto';
+    }
+
+    introScreen.addEventListener('click', hideIntro);
+    setTimeout(() => { if (!introHidden) hideIntro(); }, 5000);
+    document.body.style.overflow = 'hidden';
+
+    // --- 3. ÖZEL İMLEÇ ---
     const cursor = document.getElementById('cursor');
     document.addEventListener('mousemove', (e) => {
       cursor.style.left = e.clientX + 'px';
       cursor.style.top = e.clientY + 'px';
     });
+    document.querySelectorAll('a, button, .info-card').forEach(el => {
+      el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+      el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+    });
 
-    const resultsArea = document.getElementById('resultsArea');
-    const searchInput = document.getElementById('searchInput');
-    const searchBtn = document.getElementById('searchBtn');
-
-    async function startSearch() {
-      const query = searchInput.value.trim();
-      if (!query) return;
-
-      resultsArea.classList.add('active');
-      resultsArea.innerHTML = `<div class="status-msg">İnternette araştırılıyor... Lütfen bekle.</div>`;
-      searchBtn.disabled = true;
-      searchBtn.innerText = "Aranıyor...";
-
-      try {
-        // Wikipedia API'sini kullanıyoruz (CORS desteklidir, proxy gerektirmez)
-        const wikiUrl = `https://tr.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(query)}&format=json&origin=*&utf8=1`;
-        
-        const response = await fetch(wikiUrl);
-        const data = await response.json();
-
-        resultsArea.innerHTML = ''; 
-
-        if (data.query && data.query.search && data.query.search.length > 0) {
-          // Arama sonuçlarını listele
-          data.query.search.forEach(item => {
-            // HTML etiketlerini temizle
-            const cleanSnippet = item.snippet.replace(/<[^>]*>?/gm, '');
-            
-            // Anahtar kelimeyi vurgula (highlight)
-            const regex = new RegExp(`(${query})`, "gi");
-            const highlightedSnippet = cleanSnippet.replace(regex, '<mark>$1</mark>');
-
-            const div = document.createElement('div');
-            div.className = 'result-item';
-            div.innerHTML = `
-              <h3>${item.title}</h3>
-              <div class="result-snippet">... ${highlightedSnippet} ...</div>
-              <a href="https://tr.wikipedia.org/wiki/${encodeURIComponent(item.title)}" target="_blank" class="result-link">Wikipedia'da Oku →</a>
-            `;
-            resultsArea.appendChild(div);
-          });
-        } else {
-          resultsArea.innerHTML = `<div class="status-msg">"${query}" için sonuç bulunamadı. Farklı bir kelime dene.</div>`;
+    // --- 4. SCROLL REVEAL ---
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('active');
+          observer.unobserve(entry.target);
         }
-
-      } catch (error) {
-        resultsArea.innerHTML = `<div class="status-msg" style="color:var(--pink);">Bağlantı hatası oluştu. Lütfen tekrar dene.</div>`;
-        console.error(error);
-      } finally {
-        searchBtn.disabled = false;
-        searchBtn.innerText = "Ara";
-      }
-    }
-
-    function handleEnter(e) {
-      if (e.key === 'Enter') startSearch();
-    }
+      });
+    }, { threshold: 0.15 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
   </script>
 
 </body>
