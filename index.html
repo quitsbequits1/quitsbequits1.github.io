@@ -6,7 +6,7 @@
 <title>Buğrahan — Halloween Edition</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Creepster&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg: #080202; /* Kanlı siyah */
@@ -46,9 +46,9 @@
   .intro-screen.hidden { opacity: 0; visibility: hidden; }
 
   .intro-text {
-    font-family: 'Creepster', cursive; /* Ürkütücü Font */
-    font-size: clamp(3rem, 8vw, 7rem);
-    font-weight: 400; line-height: 1.1; letter-spacing: 2px;
+    font-family: 'Space Grotesk', sans-serif; /* Okunabilir modern font */
+    font-size: clamp(2.5rem, 7vw, 5.5rem);
+    font-weight: 700; line-height: 1.1; letter-spacing: -2px;
     color: var(--red);
     text-shadow: 0 0 20px rgba(220, 38, 38, 0.6), 0 0 40px rgba(220, 38, 38, 0.3);
     opacity: 0; transform: translateY(30px); filter: blur(10px);
@@ -58,7 +58,9 @@
     display: block; 
     color: var(--orange);
     text-shadow: 0 0 20px rgba(234, 88, 12, 0.6);
-    margin-top: 10px;
+    margin-top: 15px;
+    font-size: clamp(1.2rem, 3vw, 2rem);
+    letter-spacing: 0;
   }
   .intro-hint {
     margin-top: 50px; font-size: 0.9rem; color: var(--muted);
@@ -89,7 +91,7 @@
     z-index: 100; mix-blend-mode: difference;
   }
   .logo-container { display: flex; align-items: center; gap: 16px; }
-  .logo { font-family: 'Creepster', cursive; font-size: 1.8rem; font-weight: 400; letter-spacing: 1px; color: var(--red); }
+  .logo { font-family: 'Space Grotesk', sans-serif; font-size: 1.6rem; font-weight: 700; letter-spacing: -0.5px; color: var(--red); }
   
   .status-badge {
     display: flex; align-items: center; gap: 8px; font-size: 0.75rem; font-weight: 600;
@@ -193,7 +195,7 @@
   <!-- Navbar -->
   <nav>
     <div class="logo-container">
-      <div class="logo">Buğrahan.</div>
+      <div class="logo">BUĞRAHAN.</div>
       <div class="status-badge" id="statusBadge" title="Türkiye Saati (UTC+3)">
         <div class="status-dot offline" id="statusDot"></div>
         <span id="statusText">Yükleniyor...</span>
@@ -270,9 +272,8 @@
     <div>Happy Halloween 🎃</div>
   </footer>
 
-  <!-- SES EFEKTİ (Karanlık Rüzgar / Gıcırtı) -->
+  <!-- SES EFEKTİ (Karanlık Rüzgar) -->
   <audio id="halloweenSound" loop>
-    <!-- Ücretsiz bir korku sesi URL'si -->
     <source src="https://www.soundjay.com/halloween/sounds/creepy-wind-01.mp3" type="audio/mpeg">
   </audio>
 
@@ -313,8 +314,8 @@
       if (introHidden) return;
       introHidden = true;
       
-      // Sesi başlat (Tarayıcılar sadece tıklama ile sese izin verir)
-      spookySound.volume = 0.4; // Ses seviyesi (0.0 - 1.0)
+      // Sesi başlat
+      spookySound.volume = 0.3; 
       spookySound.play().catch(e => console.log("Ses çalınamadı:", e));
 
       introScreen.classList.add('hidden');
