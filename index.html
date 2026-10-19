@@ -3,143 +3,76 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bdugrhan — Secure Vault</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<title>Bdugrhan — Black Vault</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700&family=Fira+Code&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #050507;
-    --surface: #0d0d12;
-    --border: #1f1f27;
-    --text: #f4f4f5;
-    --muted: #71717a;
-    --danger: #ef4444;
-    --success: #10b981;
-  }
-
+  :root { --bg: #030305; --surface: #0a0a0f; --border: #1a1a24; --text: #fff; --muted: #666; --danger: #ff3333; }
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body {
-    background-color: var(--bg); color: var(--text); font-family: 'Inter', sans-serif;
-    height: 100vh; overflow: hidden; display: flex; justify-content: center; align-items: center;
-    user-select: none; -webkit-user-select: none;
-  }
-
-  .screen {
-    position: absolute; inset: 0; display: flex; flex-direction: column;
-    justify-content: center; align-items: center; opacity: 0; pointer-events: none;
-    transition: opacity 0.4s ease; padding: 20px;
-  }
+  body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; height: 100vh; overflow: hidden; display: flex; justify-content: center; align-items: center; user-select: none; }
+  .screen { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: 0.4s; padding: 20px; }
   .screen.active { opacity: 1; pointer-events: auto; z-index: 10; }
-
-  /* Hoşgeldin */
+  
   #welcome-screen { cursor: pointer; }
   .welcome-logo { font-family: 'Space Grotesk', sans-serif; font-size: clamp(3rem, 8vw, 6rem); font-weight: 700; letter-spacing: -3px; margin-bottom: 10px; }
   .welcome-sub { color: var(--muted); font-size: 0.85rem; letter-spacing: 5px; text-transform: uppercase; margin-bottom: 50px; }
-  .welcome-hint { font-size: 0.9rem; color: #fff; padding: 10px 24px; border: 1px solid var(--border); border-radius: 100px; animation: pulseBorder 2s infinite ease-in-out; }
-  @keyframes pulseBorder { 0%, 100% { border-color: var(--border); } 50% { border-color: #555; } }
+  .welcome-hint { font-size: 0.9rem; color: #fff; padding: 10px 24px; border: 1px solid var(--border); border-radius: 100px; }
 
-  /* Auth */
   #auth-screen { background: var(--bg); z-index: 20; }
   .auth-box { width: 100%; max-width: 450px; background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 40px; }
   .auth-header { text-align: center; margin-bottom: 30px; }
   .auth-header h2 { font-family: 'Space Grotesk', sans-serif; font-size: 1.5rem; margin-bottom: 10px; }
   .auth-header p { color: var(--muted); font-size: 0.85rem; }
-
-  .device-fingerprint { background: #000; border: 1px solid var(--border); border-radius: 8px; padding: 15px; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center; }
-  .device-info { font-size: 0.75rem; color: var(--muted); }
-  .device-info strong { color: #fff; font-family: 'Fira Code', monospace; display: block; margin-top: 4px; word-break: break-all; }
-  .device-status { font-size: 0.7rem; font-weight: 600; padding: 4px 10px; border-radius: 4px; background: rgba(16, 185, 129, 0.1); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.2); }
-
   .input-group { margin-bottom: 20px; }
   .input-group label { display: block; font-size: 0.8rem; color: var(--muted); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
-  .input-group input { width: 100%; padding: 15px; background: #000; border: 1px solid var(--border); border-radius: 8px; color: #fff; font-family: 'Fira Code', monospace; font-size: 1rem; outline: none; transition: border-color 0.2s; }
-  .input-group input:focus { border-color: #555; }
-  
-  .submit-btn { width: 100%; padding: 15px; background: var(--text); color: var(--bg); border: none; border-radius: 8px; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 1rem; cursor: pointer; transition: background 0.2s; }
-  .submit-btn:hover { background: #d4d4d8; }
-  .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .input-group input { width: 100%; padding: 15px; background: #000; border: 1px solid var(--border); border-radius: 8px; color: #fff; font-family: 'Fira Code', monospace; font-size: 1rem; outline: none; }
+  .input-group input:focus { border-color: #444; }
+  .submit-btn { width: 100%; padding: 15px; background: var(--text); color: var(--bg); border: none; border-radius: 8px; font-weight: 600; font-size: 1rem; cursor: pointer; }
+  .submit-btn:hover { background: #ccc; }
+  .error-msg { color: var(--danger); font-size: 0.85rem; text-align: center; margin-bottom: 15px; min-height: 20px; }
 
-  .error-msg { color: var(--danger); font-size: 0.85rem; text-align: center; margin-bottom: 15px; font-weight: 500; min-height: 20px; }
-  .attempts-left { text-align: center; font-size: 0.8rem; color: var(--muted); margin-top: 20px; }
-  .attempts-left span { color: var(--danger); font-weight: 600; }
-
-  /* Blocked */
-  #blocked-screen { background: #000; z-index: 30; }
-  .blocked-icon { width: 60px; height: 60px; background: var(--danger); color: #000; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 2rem; font-weight: bold; margin-bottom: 20px; }
-  .blocked-text { font-family: 'Space Grotesk', sans-serif; font-size: 1.8rem; color: var(--danger); margin-bottom: 10px; }
-  .blocked-sub { color: var(--muted); font-size: 0.9rem; text-align: center; max-width: 400px; line-height: 1.6; }
-
-  /* App */
   #app-screen { display: block; padding: 40px 5vw; overflow-y: auto; align-items: flex-start; justify-content: flex-start; }
   header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 20px; margin-bottom: 30px; flex-wrap: wrap; gap: 20px; }
-  .logo { font-family: 'Space Grotesk', sans-serif; font-size: 1.5rem; font-weight: 700; letter-spacing: -1px; display: flex; align-items: center; gap: 8px; }
+  .logo { font-family: 'Space Grotesk', sans-serif; font-size: 1.5rem; font-weight: 700; display: flex; align-items: center; gap: 8px; }
   .logo-dot { width: 8px; height: 8px; background: var(--text); border-radius: 50%; }
-
-  .header-actions { display: flex; gap: 15px; align-items: center; flex-wrap: wrap; }
-  .storage-widget { display: flex; flex-direction: column; gap: 6px; background: var(--surface); border: 1px solid var(--border); padding: 10px 15px; border-radius: 8px; min-width: 250px; }
-  .storage-text { font-size: 0.75rem; color: var(--muted); display: flex; justify-content: space-between; }
-  .storage-text strong { color: var(--text); }
-  .storage-bar-bg { width: 100%; height: 3px; background: #27272a; border-radius: 10px; overflow: hidden; margin-top: 4px; }
-  .storage-bar-fill { height: 100%; background: var(--text); width: 0%; transition: width 0.5s; }
-
-  .btn-lock { background: transparent; border: 1px solid var(--border); color: var(--text); padding: 12px 20px; border-radius: 8px; cursor: pointer; font-weight: 500; font-size: 0.9rem; transition: 0.2s; }
+  .btn-lock { background: transparent; border: 1px solid var(--border); color: var(--text); padding: 12px 20px; border-radius: 8px; cursor: pointer; font-weight: 500; font-size: 0.9rem; }
   .btn-lock:hover { background: var(--surface); }
 
-  .dropzone { border: 1px dashed var(--border); border-radius: 12px; padding: 40px 20px; text-align: center; background: var(--surface); cursor: pointer; margin-bottom: 30px; transition: border-color 0.2s; }
-  .dropzone:hover, .dropzone.dragover { border-color: #555; }
-  .dropzone-icon { font-size: 2rem; color: var(--muted); margin-bottom: 15px; }
+  .dropzone { border: 1px dashed var(--border); border-radius: 12px; padding: 40px 20px; text-align: center; background: var(--surface); cursor: pointer; margin-bottom: 30px; }
+  .dropzone:hover { border-color: #444; }
   .dropzone h3 { font-size: 1rem; margin-bottom: 8px; font-weight: 500; }
   .dropzone p { color: var(--muted); font-size: 0.85rem; }
   .dropzone input { display: none; }
 
-  #progress-container { display: none; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 15px; margin-bottom: 20px; }
-  #progress-container.show { display: block; }
-  .progress-label { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.8rem; color: var(--muted); }
-  .progress-bar-bg { width: 100%; height: 3px; background: #27272a; border-radius: 10px; overflow: hidden; }
-  .progress-bar-fill { height: 100%; width: 0%; background: var(--text); transition: width 0.1s ease; }
-
-  .file-list-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-  .file-list-header h2 { font-size: 1rem; font-weight: 600; }
-  .file-count { color: var(--muted); font-size: 0.85rem; }
   #file-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px; }
-
-  .file-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px; display: flex; flex-direction: column; transition: border-color 0.2s; }
-  .file-card:hover { border-color: #3f3f46; }
-  .file-icon-badge { width: 35px; height: 35px; border-radius: 6px; background: #27272a; color: var(--muted); display: flex; justify-content: center; align-items: center; font-family: 'Fira Code', monospace; font-weight: 600; font-size: 0.7rem; margin-bottom: 15px; }
+  .file-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px; display: flex; flex-direction: column; }
+  .file-icon-badge { width: 35px; height: 35px; border-radius: 6px; background: #1a1a24; color: var(--muted); display: flex; justify-content: center; align-items: center; font-family: 'Fira Code', monospace; font-weight: 600; font-size: 0.7rem; margin-bottom: 15px; }
   .file-name { font-weight: 500; font-size: 0.95rem; margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .file-size { color: var(--muted); font-size: 0.8rem; margin-bottom: 20px; font-family: 'Fira Code', monospace; }
-
+  .file-size { color: var(--muted); font-size: 0.8rem; margin-bottom: 20px; }
   .file-actions { display: flex; gap: 8px; margin-top: auto; }
-  .file-actions button { flex: 1; padding: 8px; border-radius: 6px; border: 1px solid var(--border); background: transparent; color: var(--text); font-size: 0.75rem; font-weight: 500; cursor: pointer; transition: all 0.2s; }
-  .btn-preview:hover { border-color: var(--text); }
-  .btn-download:hover { border-color: var(--success); color: var(--success); }
-  .btn-delete:hover { border-color: var(--danger); color: var(--danger); }
+  .file-actions button { flex: 1; padding: 8px; border-radius: 6px; border: 1px solid var(--border); background: transparent; color: var(--text); font-size: 0.75rem; cursor: pointer; }
+  .file-actions button:hover { background: #1a1a24; }
+  .btn-delete:hover { color: var(--danger); border-color: var(--danger); }
 
-  .empty-state { grid-column: 1 / -1; text-align: center; padding: 40px; color: var(--muted); border: 1px dashed var(--border); border-radius: 8px; font-size: 0.9rem; }
-
-  #toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--text); color: var(--bg); padding: 12px 24px; border-radius: 6px; font-weight: 600; font-size: 0.85rem; opacity: 0; transition: all 0.3s ease; z-index: 10000; pointer-events: none; }
+  #toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--text); color: var(--bg); padding: 12px 24px; border-radius: 6px; font-weight: 600; font-size: 0.85rem; opacity: 0; transition: 0.3s; z-index: 10000; }
   #toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
   #toast.error { background: var(--danger); color: #fff; }
 
   #preview-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 5000; display: none; justify-content: center; align-items: center; padding: 20px; }
   #preview-modal.active { display: flex; }
   .preview-content { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; width: 100%; max-width: 900px; height: 90vh; display: flex; flex-direction: column; overflow: hidden; }
-  .preview-header { padding: 20px 25px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: #0a0a0c; }
-  .preview-header-left { display: flex; flex-direction: column; gap: 5px; }
-  .preview-header h3 { font-size: 1.1rem; word-break: break-all; font-weight: 600; color: #fff; }
-  .preview-header span { font-size: 0.8rem; color: var(--muted); font-family: 'Fira Code', monospace; }
-  .btn-back { display: flex; align-items: center; gap: 8px; background: transparent; border: 1px solid var(--border); color: #fff; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-family: 'Inter', sans-serif; font-size: 0.85rem; transition: background 0.2s; }
-  .btn-back:hover { background: #27272a; }
-  .preview-body { padding: 25px; overflow-y: auto; flex: 1; background: #000; display: flex; flex-direction: column; justify-content: flex-start; }
-  .preview-body pre { font-family: 'Fira Code', monospace; font-size: 0.9rem; line-height: 1.6; color: #d4d4d8; white-space: pre; word-wrap: normal; overflow-x: auto; }
-  .preview-body img { max-width: 100%; max-height: 100%; object-fit: contain; display: block; margin: auto; border-radius: 4px; }
+  .preview-header { padding: 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+  .btn-back { background: transparent; border: 1px solid var(--border); color: #fff; padding: 8px 16px; border-radius: 6px; cursor: pointer; }
+  .preview-body { padding: 20px; overflow-y: auto; flex: 1; background: #000; }
+  .preview-body pre { font-family: 'Fira Code', monospace; font-size: 0.9rem; color: #ccc; white-space: pre-wrap; }
+  .preview-body img { max-width: 100%; max-height: 100%; object-fit: contain; display: block; margin: auto; }
 </style>
 </head>
 <body>
 
 <div class="screen active" id="welcome-screen" onclick="goToAuth()">
   <div class="welcome-logo">Bdugrhan</div>
-  <div class="welcome-sub">Secure Vault</div>
-  <div class="welcome-hint">Sisteme erişmek için tıkla</div>
+  <div class="welcome-sub">Black Vault</div>
+  <div class="welcome-hint">Askeri Düzey Erişim</div>
 </div>
 
 <div class="screen" id="auth-screen">
@@ -148,60 +81,26 @@
       <h2>Gizli Erişim</h2>
       <p>Erişim için yetkili kodu girin.</p>
     </div>
-    <div class="device-fingerprint">
-      <div class="device-info">
-        CİHAZ PARMAK İZİ
-        <strong id="fingerprint-text">Hesaplanıyor...</strong>
-      </div>
-      <div class="device-status" id="device-status">GÜVENLİ</div>
-    </div>
     <div class="error-msg" id="error-msg"></div>
     <div class="input-group">
       <label>Erişim Kodu</label>
       <input type="password" id="auth-code" placeholder="••••••••••••••••" autocomplete="off" onkeypress="handleEnter(event)">
     </div>
     <button class="submit-btn" id="submit-btn" onclick="verifyAuth()">Kilidi Aç</button>
-    <div class="attempts-left" id="attempts-display">
-      Kalan Deneme Hakkı: <span id="attempts-count">4</span>
-    </div>
   </div>
-</div>
-
-<div class="screen" id="blocked-screen">
-  <div class="blocked-icon">✕</div>
-  <div class="blocked-text">Cihaz Kilitlendi</div>
-  <div class="blocked-sub">Zero Trust protokolü gereği, çok fazla başarısız deneme yapıldı. Erişim engellendi.</div>
 </div>
 
 <div class="screen" id="app-screen">
   <header>
     <div class="logo">Bdugrhan <div class="logo-dot"></div></div>
-    <div class="header-actions">
-      <div class="storage-widget">
-        <div class="storage-text">
-          <span>KOTA: <strong id="storageQuota">...</strong></span>
-          <span>KULLANILAN: <strong id="storageUsed">0 B</strong></span>
-        </div>
-        <div class="storage-bar-bg"><div class="storage-bar-fill" id="storageBar"></div></div>
-      </div>
-      <button class="btn-lock" onclick="lockSystem()">Sistemi Kilitle</button>
-    </div>
+    <button class="btn-lock" onclick="lockSystem()">Sistemi Kilitle</button>
   </header>
 
   <div id="library-section" style="width:100%;">
-    <div id="progress-container">
-      <div class="progress-label"><span id="progressFileName">Şifreleniyor...</span><span id="progressPercent">0%</span></div>
-      <div class="progress-bar-bg"><div class="progress-bar-fill" id="progressBar"></div></div>
-    </div>
     <div class="dropzone" id="dropzone">
       <input type="file" id="fileInput" multiple>
-      <div class="dropzone-icon">↓</div>
       <h3>Dosyaları sürükle veya tıkla</h3>
-      <p>Askeri düzey şifreleme ile saklanır. (Sınırsız)</p>
-    </div>
-    <div class="file-list-header">
-      <h2>Yüklenen Dosyalar</h2>
-      <span class="file-count" id="fileCount">0 dosya</span>
+      <p>XOR + AES-256 Çift Katmanlı Şifreleme</p>
     </div>
     <div id="file-list"></div>
   </div>
@@ -212,10 +111,7 @@
 <div id="preview-modal">
   <div class="preview-content">
     <div class="preview-header">
-      <div class="preview-header-left">
-        <h3 id="preview-title">Dosya Adı</h3>
-        <span id="preview-info">Boyut</span>
-      </div>
+      <h3 id="preview-title">Dosya Adı</h3>
       <button class="btn-back" onclick="closePreview()">← Geri Dön</button>
     </div>
     <div class="preview-body" id="preview-body"></div>
@@ -223,219 +119,183 @@
 </div>
 
 <script>
-  // --- GİZLENMİŞ GÜVENLİK ANAHTARLARI ---
-  const _0x4f2a = "QnVyYWhhbiEyNzU4Mjc1ODAwMzc0NjI1OTczNjQ="; // Şifre
-  const _0x1a3b = 'Bdugrhan_Vault_DB'; // DB Adı
-  const _0x9c8d = 'vault_store'; // Store Adı
-  const _0x7e6f = 4; // Max Deneme
+  // ============================================
+  // ⚠️ SİSTEM AYARLARI (GİZLENMİŞ DEĞİŞKENLER)
+  // ============================================
+  const _0xG1 = "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"; // Token
+  const _0xU1 = "KULLANICI_ADIN"; // GitHub Kullanıcı Adın (Bunu doldur)
+  const _0xR1 = "REPO_ADIN";     // GitHub Repo Adın (Bunu doldur)
+  const _0xP1 = "SENIN_SIFREN";  // Giriş Şifren (Bunu doldur)
+  const _0xF1 = "vault_files";   // Dosyaların tutulacağı klasör
 
-  let _0x2b4c = null;
-  let _0x5d1e = null; // Master Key
-
-  function generateFingerprint() {
-    const nav = window.navigator;
-    const screen = window.screen;
-    const raw = nav.userAgent + screen.width + screen.height + screen.colorDepth + nav.language + nav.hardwareConcurrency;
-    let hash = 0;
-    for (let i = 0; i < raw.length; i++) {
-      const char = raw.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
-      hash = hash & hash;
+  // ============================================
+  // 1. XOR KATMANI (Gizli Anahtar)
+  // ============================================
+  const _0xX1 = new Uint8Array([0x42, 0x64, 0x75, 0x67, 0x72, 0x68, 0x61, 0x6E, 0x21, 0x32, 0x37, 0x35, 0x38]);
+  
+  function _0xX0R(data, key) {
+    let result = new Uint8Array(data.length);
+    for (let i = 0; i < data.length; i++) {
+      result[i] = data[i] ^ key[i % key.length];
     }
-    return Math.abs(hash).toString(16).toUpperCase();
+    return result;
   }
 
-  const _0x3f4a = generateFingerprint();
-  document.getElementById('fingerprint-text').innerText = _0x3f4a;
-
-  let _0x6b2c = parseInt(localStorage.getItem('_zt_' + _0x3f4a) || '0');
-  document.getElementById('attempts-count').innerText = _0x7e6f - _0x6b2c;
-
-  if (_0x6b2c >= _0x7e6f) {
-    document.getElementById('welcome-screen').classList.remove('active');
-    document.getElementById('blocked-screen').classList.add('active');
-  }
-
-  // Sağ Tık ve Kısayol Engelleme
-  document.addEventListener('contextmenu', e => e.preventDefault());
-  document.addEventListener('keydown', e => {
-    if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key === 'I') || (e.ctrlKey && e.key === 'u')) {
-      e.preventDefault();
-    }
-  });
-
-  // --- GİZLİ ŞİFRELEME MOTORU ---
-  async function _0x8a1b(password) {
+  // ============================================
+  // 2. AES-256-GCM KATMANI (Askeri Düzey)
+  // ============================================
+  async function _0xD3R(password) {
     const enc = new TextEncoder();
     const keyMaterial = await crypto.subtle.importKey(
       "raw", enc.encode(password), { name: "PBKDF2" }, false, ["deriveBits", "deriveKey"]
     );
-    const salt = enc.encode(_0x3f4a); 
     return crypto.subtle.deriveKey(
-      { name: "PBKDF2", salt: salt, iterations: 200000, hash: "SHA-256" },
+      { name: "PBKDF2", salt: enc.encode("black_vault_salt_v99"), iterations: 200000, hash: "SHA-256" },
       keyMaterial,
       { name: "AES-GCM", length: 256 },
-      false,
-      ["encrypt", "decrypt"]
+      false, ["encrypt", "decrypt"]
     );
   }
 
-  async function _0x4c9d(data, key) {
+  async function _0xE1(data, key) {
     const iv = crypto.getRandomValues(new Uint8Array(12));
     const ciphertext = await crypto.subtle.encrypt({ name: "AES-GCM", iv }, key, data);
     return { iv, ciphertext };
   }
 
-  async function _0x1e7f(ciphertext, iv, key) {
+  async function _0xD1(ciphertext, iv, key) {
     return await crypto.subtle.decrypt({ name: "AES-GCM", iv }, key, ciphertext);
   }
 
-  // --- EKRAN GEÇİŞLERİ ---
-  function goToAuth() {
-    if (_0x6b2c >= _0x7e6f) return;
+  // ============================================
+  // 3. GITHUB API FONKSİYONLARI
+  // ============================================
+  async function _0xGH_UP(filename, base64Content) {
+    const path = `${_0xF1}/${filename}`;
+    const url = `https://api.github.com/repos/${_0xU1}/${_0xR1}/contents/${path}`;
+    
+    let sha = null;
+    try {
+      const check = await fetch(url, { headers: { "Authorization": `Bearer ${_0xG1}` } });
+      if (check.ok) { const d = await check.json(); sha = d.sha; }
+    } catch(e) {}
+
+    const body = { message: `Upload ${filename}`, content: base64Content, branch: "main" };
+    if (sha) body.sha = sha;
+
+    const res = await fetch(url, {
+      method: "PUT",
+      headers: { "Authorization": `Bearer ${_0xG1}`, "Accept": "application/vnd.github.v3+json" },
+      body: JSON.stringify(body)
+    });
+    if (!res.ok) throw new Error("GitHub yükleme hatası");
+  }
+
+  async function _0xGH_LIST() {
+    const url = `https://api.github.com/repos/${_0xU1}/${_0xR1}/contents/${_0xF1}`;
+    const res = await fetch(url, { headers: { "Authorization": `Bearer ${_0xG1}` } });
+    if (!res.ok) { if (res.status === 404) return []; throw new Error("Liste alınamadı"); }
+    return await res.json();
+  }
+
+  async function _0xGH_DEL(filename, sha) {
+    const url = `https://api.github.com/repos/${_0xU1}/${_0xR1}/contents/${_0xF1}/${filename}`;
+    const res = await fetch(url, {
+      method: "DELETE",
+      headers: { "Authorization": `Bearer ${_0xG1}`, "Accept": "application/vnd.github.v3+json" },
+      body: JSON.stringify({ message: `Delete ${filename}`, sha: sha, branch: "main" })
+    });
+    if (!res.ok) throw new Error("Silme başarısız");
+  }
+
+  // ============================================
+  // YARDIMCILAR
+  // ============================================
+  let _0xMK = null; // Master Key
+  let _0xCUR = [];  // Current Files
+
+  function showToast(msg, err = false) {
+    const t = document.getElementById('toast');
+    t.innerText = msg;
+    t.className = err ? 'show error' : 'show';
+    clearTimeout(window.tt);
+    window.tt = setTimeout(() => t.classList.remove('show'), 3000);
+  }
+
+  function _0xB64(buffer) {
+    let binary = '';
+    const bytes = new Uint8Array(buffer);
+    for (let i = 0; i < bytes.byteLength; i++) binary += String.fromCharCode(bytes[i]);
+    return btoa(binary);
+  }
+
+  function _0xU64(base64) {
+    const binary = atob(base64);
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+    return bytes.buffer;
+  }
+
+  // ============================================
+  // EKRAN GEÇİŞLERİ
+  // ============================================
+  window.goToAuth = function() {
     document.getElementById('welcome-screen').classList.remove('active');
     document.getElementById('auth-screen').classList.add('active');
     setTimeout(() => document.getElementById('auth-code').focus(), 100);
-  }
+  };
 
-  async function verifyAuth() {
+  window.handleEnter = function(e) { if (e.key === 'Enter') verifyAuth(); };
+
+  window.verifyAuth = async function() {
     const input = document.getElementById('auth-code').value;
-    const errorMsg = document.getElementById('error-msg');
+    const err = document.getElementById('error-msg');
     const btn = document.getElementById('submit-btn');
 
-    if (btoa(input) === _0x4f2a) {
-      errorMsg.innerText = "";
-      document.getElementById('device-status').innerText = "DOĞRULANDI";
-      document.getElementById('device-status').style.background = "rgba(255,255,255,0.1)";
+    if (input === _0xP1) {
+      err.innerText = "";
+      btn.disabled = true;
+      btn.innerText = "Anahtar Hesaplanıyor...";
       
-      _0x5d1e = await _0x8a1b(input);
-      localStorage.setItem('_zt_' + _0x3f4a, '0');
-      
-      setTimeout(() => {
+      try {
+        _0xMK = await _0xD3R(input); // AES Anahtarı
+        
         document.getElementById('auth-screen').classList.remove('active');
         document.getElementById('app-screen').classList.add('active');
-        initApp();
-      }, 500);
-
-    } else {
-      _0x6b2c++;
-      localStorage.setItem('_zt_' + _0x3f4a, _0x6b2c);
-      const remaining = _0x7e6f - _0x6b2c;
-      document.getElementById('attempts-count').innerText = remaining;
-
-      if (_0x6b2c >= _0x7e6f) {
-        errorMsg.innerText = "Sistem kilitleniyor...";
-        btn.disabled = true;
-        setTimeout(() => {
-          document.getElementById('auth-screen').classList.remove('active');
-          document.getElementById('blocked-screen').classList.add('active');
-        }, 800);
-      } else {
-        errorMsg.innerText = "Hatalı kod!";
-        document.getElementById('auth-code').value = '';
-        const box = document.querySelector('.auth-box');
-        box.style.borderColor = "var(--danger)";
-        setTimeout(() => box.style.borderColor = "var(--border)", 500);
+        await loadFiles();
+      } catch (e) {
+        err.innerText = "Kritik Hata: " + e.message;
+        btn.disabled = false;
+        btn.innerText = "Kilidi Aç";
       }
+    } else {
+      err.innerText = "Erişim Reddedildi!";
+      document.getElementById('auth-code').value = '';
     }
-  }
+  };
 
-  function handleEnter(e) { if (e.key === 'Enter') verifyAuth(); }
-
-  function lockSystem() {
-    _0x5d1e = null;
+  window.lockSystem = function() {
+    _0xMK = null;
     document.getElementById('app-screen').classList.remove('active');
     document.getElementById('welcome-screen').classList.add('active');
     document.getElementById('auth-code').value = '';
     document.getElementById('file-list').innerHTML = '';
-  }
+    document.getElementById('submit-btn').disabled = false;
+    document.getElementById('submit-btn').innerText = "Kilidi Aç";
+  };
 
-  // --- VERİTABANI ---
-  function openDB() {
-    return new Promise((resolve, reject) => {
-      const request = indexedDB.open(_0x1a3b, 1);
-      request.onupgradeneeded = (e) => {
-        if (!e.target.result.objectStoreNames.contains(_0x9c8d)) {
-          e.target.result.createObjectStore(_0x9c8d, { keyPath: 'id' });
-        }
-      };
-      request.onsuccess = (e) => { _0x2b4c = e.target.result; resolve(_0x2b4c); };
-      request.onerror = (e) => reject(e.target.error);
-    });
-  }
-
-  const addFileToDB = (fileObj) => new Promise((res, rej) => {
-    const tx = _0x2b4c.transaction(_0x9c8d, 'readwrite');
-    const req = tx.objectStore(_0x9c8d).add(fileObj);
-    req.onsuccess = () => res(); req.onerror = () => rej(req.error);
-  });
-
-  const getAllFiles = () => new Promise((res, rej) => {
-    const tx = _0x2b4c.transaction(_0x9c8d, 'readonly');
-    const req = tx.objectStore(_0x9c8d).getAll();
-    req.onsuccess = () => res(req.result || []); req.onerror = () => rej(req.error);
-  });
-
-  const deleteFileFromDB = (id) => new Promise((res, rej) => {
-    const tx = _0x2b4c.transaction(_0x9c8d, 'readwrite');
-    const req = tx.objectStore(_0x9c8d).delete(id);
-    req.onsuccess = () => res(); req.onerror = () => rej(req.error);
-  });
-
-  async function updateStorageInfo() {
-    if (!navigator.storage || !navigator.storage.estimate) return;
-    try {
-      const estimate = await navigator.storage.estimate();
-      const files = await getAllFiles();
-      const usedByApp = files.reduce((sum, f) => sum + (f.size || 0), 0);
-      document.getElementById('storageQuota').innerText = formatSize(estimate.quota);
-      document.getElementById('storageUsed').innerText = formatSize(usedByApp);
-      document.getElementById('storageBar').style.width = Math.min((usedByApp / estimate.quota) * 100, 100) + '%';
-    } catch (e) {}
-  }
-
-  if (navigator.storage && navigator.storage.persist) navigator.storage.persist();
-
+  // ============================================
+  // DOSYA YÜKLEME
+  // ============================================
   const dropzone = document.getElementById('dropzone');
   const fileInput = document.getElementById('fileInput');
   const fileList = document.getElementById('file-list');
-  const fileCount = document.getElementById('fileCount');
-  const toast = document.getElementById('toast');
-  const previewModal = document.getElementById('preview-modal');
-  const previewBody = document.getElementById('preview-body');
-  const progressContainer = document.getElementById('progress-container');
-  const progressBar = document.getElementById('progressBar');
-  const progressPercent = document.getElementById('progressPercent');
-  const progressFileName = document.getElementById('progressFileName');
-
-  let currentFiles = [];
-
-  async function initApp() {
-    await openDB();
-    await updateStorageInfo();
-    await loadFiles();
-  }
-
-  function showToast(msg, isError = false) {
-    toast.innerText = msg;
-    toast.className = isError ? 'show error' : 'show';
-    clearTimeout(window.toastTimer);
-    window.toastTimer = setTimeout(() => toast.classList.remove('show'), 3000);
-  }
-
-  function formatSize(bytes) {
-    if (!bytes) return '0 B';
-    if (bytes < 1024) return bytes + ' B';
-    if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
-    if (bytes < 1073741824) return (bytes / 1048576).toFixed(1) + ' MB';
-    return (bytes / 1073741824).toFixed(2) + ' GB';
-  }
 
   dropzone.addEventListener('click', () => fileInput.click());
-  dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('dragover'); });
-  dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
+  dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.style.borderColor = "#fff"; });
+  dropzone.addEventListener('dragleave', () => dropzone.style.borderColor = "");
   dropzone.addEventListener('drop', (e) => {
-    e.preventDefault(); dropzone.classList.remove('dragover');
+    e.preventDefault(); dropzone.style.borderColor = "";
     if (e.dataTransfer.files.length > 0) handleFiles(e.dataTransfer.files);
   });
   fileInput.addEventListener('change', (e) => {
@@ -444,178 +304,164 @@
   });
 
   async function handleFiles(filesArray) {
-    if (!_0x5d1e) return showToast("Önce giriş yap!", true);
-    
+    if (!_0xMK) return showToast("Önce giriş yap!", true);
     const files = Array.from(filesArray);
-    if (files.length === 0) return;
-
-    progressContainer.classList.add('show');
-    let totalSize = files.reduce((sum, f) => sum + f.size, 0);
-    let processedSize = 0;
-
+    
     for (const file of files) {
-      progressFileName.innerText = `Şifreleniyor: ${file.name}`;
-      
       try {
+        // 1. Dosyayı oku
         const buffer = await file.arrayBuffer();
-        const { iv, ciphertext } = await _0x4c9d(buffer, _0x5d1e);
         
-        const fileObj = {
-          id: Date.now() + '_' + Math.random().toString(36).substr(2, 9),
-          name: file.name,
-          type: file.type || 'application/octet-stream',
-          size: file.size,
-          data: ciphertext,
-          iv: iv,
-          createdAt: Date.now()
-        };
-
-        await addFileToDB(fileObj);
-        processedSize += file.size;
-        const percent = Math.round((processedSize / totalSize) * 100);
-        progressBar.style.width = percent + '%';
-        progressPercent.innerText = percent + '%';
+        // 2. XOR Katmanı (Gizli Anahtar)
+        const xorBuffer = _0xX0R(new Uint8Array(buffer), _0xX1);
+        
+        // 3. AES-256 Katmanı (Askeri Şifreleme)
+        const { iv, ciphertext } = await _0xE1(xorBuffer, _0xMK);
+        
+        // 4. IV + Şifreli Veri Birleştir
+        const combined = new Uint8Array(iv.length + ciphertext.byteLength);
+        combined.set(iv, 0);
+        combined.set(new Uint8Array(ciphertext), iv.length);
+        
+        // 5. Base64 ve GitHub'a Yükle
+        const b64 = _0xB64(combined.buffer);
+        const uniqueName = `${Date.now()}_${file.name}.enc`;
+        
+        await _0xGH_UP(uniqueName, b64);
+        showToast(`${file.name} şifrelenip GitHub'a yüklendi.`);
       } catch (e) {
         showToast(`${file.name} yüklenemedi!`, true);
       }
     }
-
-    setTimeout(() => progressContainer.classList.remove('show'), 500);
-    progressBar.style.width = '0%';
-    progressPercent.innerText = '0%';
-    
     await loadFiles();
-    await updateStorageInfo();
-    showToast(`${files.length} dosya şifrelenerek eklendi.`);
   }
 
+  // ============================================
+  // DOSYA LİSTELEME
+  // ============================================
   async function loadFiles() {
-    currentFiles = await getAllFiles();
-    currentFiles.sort((a, b) => b.createdAt - a.createdAt);
-    renderFiles();
+    if (!_0xMK) return;
+    try {
+      const ghFiles = await _0xGH_LIST();
+      _0xCUR = ghFiles.filter(f => f.name.endsWith('.enc'));
+      renderFiles();
+    } catch (e) {
+      showToast("Liste alınamadı!", true);
+    }
   }
 
   function renderFiles() {
     fileList.innerHTML = '';
-    fileCount.innerText = currentFiles.length + ' dosya';
-
-    if (currentFiles.length === 0) {
-      fileList.innerHTML = `<div class="empty-state">Kütüphane boş.</div>`;
+    if (_0xCUR.length === 0) {
+      fileList.innerHTML = `<div style="color:var(--muted); grid-column: 1/-1; text-align: center;">Kasa boş.</div>`;
       return;
     }
 
-    currentFiles.forEach(file => {
+    _0xCUR.forEach(file => {
+      const origName = file.name.replace(/^\d+_/, '').replace(/\.enc$/, '');
       const card = document.createElement('div');
       card.className = 'file-card';
-      
-      let ext = file.name.split('.').pop().toUpperCase();
-      if (ext.length > 5) ext = 'DOSYA';
+      let ext = origName.split('.').pop().toUpperCase();
+      if (ext.length > 5) ext = 'FILE';
 
       card.innerHTML = `
         <div class="file-icon-badge">${ext}</div>
-        <div class="file-name" title="${file.name}">${file.name}</div>
-        <div class="file-size">${formatSize(file.size)}</div>
+        <div class="file-name" title="${origName}">${origName}</div>
+        <div class="file-size">Şifreli Veri</div>
         <div class="file-actions">
-          <button class="btn-preview" onclick="previewFile('${file.id}')">Önizle</button>
-          <button class="btn-download" onclick="downloadFile('${file.id}')">İndir</button>
-          <button class="btn-delete" onclick="deleteFile('${file.id}')">Sil</button>
+          <button onclick="previewFile('${file.name}', '${origName}')">Önizle</button>
+          <button onclick="downloadFile('${file.name}', '${origName}')">İndir</button>
+          <button class="btn-delete" onclick="deleteFile('${file.name}', '${file.sha}')">Sil</button>
         </div>
       `;
       fileList.appendChild(card);
     });
   }
 
-  async function downloadFile(id) {
-    if (!_0x5d1e) return;
-    const file = currentFiles.find(f => f.id === id);
-    if (!file) return;
+  // ============================================
+  // İNDİRME VE ÇÖZME (XOR + AES)
+  // ============================================
+  async function _0xGET_DATA(ghName) {
+    const rawUrl = `https://raw.githubusercontent.com/${_0xU1}/${_0xR1}/main/${_0xF1}/${ghName}`;
+    const res = await fetch(rawUrl);
+    if (!res.ok) throw new Error("İndirilemedi");
     
+    const b64 = await res.text();
+    const combined = _0xU64(b64);
+    
+    const iv = new Uint8Array(combined.slice(0, 12));
+    const ciphertext = combined.slice(12);
+    
+    // 1. AES Çöz
+    const aesDecrypted = await _0xD1(ciphertext, iv, _0xMK);
+    
+    // 2. XOR Çöz
+    const finalBuffer = _0xX0R(new Uint8Array(aesDecrypted), _0xX1);
+    return finalBuffer.buffer;
+  }
+
+  window.downloadFile = async function(ghName, origName) {
+    if (!_0xMK) return;
     try {
-      const decryptedBuffer = await _0x1e7f(file.data, file.iv, _0x5d1e);
-      const blob = new Blob([decryptedBuffer], { type: file.type });
+      showToast("Deşifre ediliyor...");
+      const buf = await _0xGET_DATA(ghName);
+      const blob = new Blob([buf]);
       const url = URL.createObjectURL(blob);
-      
       const a = document.createElement('a');
-      a.href = url; a.download = file.name;
-      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      a.href = url; a.download = origName;
+      a.click();
       setTimeout(() => URL.revokeObjectURL(url), 1000);
-      showToast(`${file.name} çözüldü.`);
+      showToast(`${origName} indirildi.`);
     } catch (e) {
-      showToast("Dosya çözülemedi!", true);
+      showToast("Şifre çözülemedi! Hatalı anahtar.", true);
     }
-  }
+  };
 
-  async function deleteFile(id) {
+  window.deleteFile = async function(ghName, sha) {
     if (!confirm('Dosya silinsin mi?')) return;
-    await deleteFileFromDB(id);
-    await loadFiles();
-    await updateStorageInfo();
-    showToast('Silindi.');
-  }
+    try {
+      await _0xGH_DEL(ghName, sha);
+      showToast('Silindi.');
+      await loadFiles();
+    } catch (e) {
+      showToast("Silinemedi: " + e.message, true);
+    }
+  };
 
-  async function previewFile(id) {
-    if (!_0x5d1e) return;
-    const file = currentFiles.find(f => f.id === id);
-    if (!file) return;
-
-    document.getElementById('preview-title').innerText = file.name;
-    document.getElementById('preview-info').innerText = `${formatSize(file.size)}`;
-    previewBody.innerHTML = 'Deşifre ediliyor...';
-    previewModal.classList.add('active');
+  window.previewFile = async function(ghName, origName) {
+    if (!_0xMK) return;
+    document.getElementById('preview-title').innerText = origName;
+    document.getElementById('preview-body').innerHTML = 'Deşifre ediliyor...';
+    document.getElementById('preview-modal').classList.add('active');
 
     try {
-      const decryptedBuffer = await _0x1e7f(file.data, file.iv, _0x5d1e);
+      const buf = await _0xGET_DATA(ghName);
+      const ext = origName.split('.').pop().toLowerCase();
+      const isImage = ['jpg','jpeg','png','gif','webp','svg'].includes(ext);
+      const isText = ['lua','py','js','html','css','json','txt','md','xml','sh','bat','c','cpp','h','java','php','rb','go','rs','cs','swift','kt','log','ini','cfg','yml','yaml'].includes(ext);
       
-      const isImage = file.type.startsWith('image/');
-      const isText = file.name.match(/\.(lua|py|js|html|css|json|txt|md|xml|sh|bat|c|cpp|h|java|php|rb|go|rs|cs|swift|kt|log|ini|cfg|yml|yaml)$/i) || file.type.includes('text');
-      const isVideo = file.type.startsWith('video/');
-      const isAudio = file.type.startsWith('audio/');
-      const isPDF = file.type === 'application/pdf';
-
-      if (isImage || isVideo || isAudio || isPDF) {
-        const blob = new Blob([decryptedBuffer], { type: file.type });
-        const url = URL.createObjectURL(blob);
-        previewBody.innerHTML = '';
-        
-        if (isImage) {
-          const img = document.createElement('img'); img.src = url; previewBody.appendChild(img);
-        } else if (isVideo) {
-          const video = document.createElement('video'); video.src = url; video.controls = true; video.style.maxWidth = '100%'; video.style.maxHeight = '100%'; previewBody.appendChild(video);
-        } else if (isAudio) {
-          const audio = document.createElement('audio'); audio.src = url; audio.controls = true; audio.style.width = '100%'; previewBody.appendChild(audio);
-        } else if (isPDF) {
-          const embed = document.createElement('iframe'); embed.src = url; embed.style.width = '100%'; embed.style.height = '100%'; embed.style.border = 'none'; previewBody.appendChild(embed);
-        }
+      const body = document.getElementById('preview-body');
+      body.innerHTML = '';
+      
+      if (isImage) {
+        const url = URL.createObjectURL(new Blob([buf]));
+        const img = document.createElement('img'); img.src = url;
+        body.appendChild(img);
       } else if (isText) {
-        const decoder = new TextDecoder('utf-8');
-        const text = decoder.decode(decryptedBuffer);
-        const pre = document.createElement('pre');
-        pre.innerText = text;
-        previewBody.innerHTML = '';
-        previewBody.appendChild(pre);
+        const text = new TextDecoder().decode(buf);
+        const pre = document.createElement('pre'); pre.innerText = text;
+        body.appendChild(pre);
       } else {
-        previewBody.innerHTML = `<div class="preview-warning">Bu tür önizlenemez.</div>`;
+        body.innerHTML = `<div style="color:var(--muted)">Önizlenemeyen tür.</div>`;
       }
     } catch (e) {
-      previewBody.innerHTML = `<div class="preview-warning" style="color:var(--danger)">Şifre çözülemedi! Anahtar hatalı.</div>`;
+      document.getElementById('preview-body').innerHTML = `<div style="color:red">Hatalı Anahtar!</div>`;
     }
-  }
+  };
 
-  function closePreview() {
-    previewModal.classList.remove('active');
-    previewBody.innerHTML = '';
-  }
-
-  previewModal.addEventListener('click', (e) => {
-    if (e.target === previewModal) closePreview();
-  });
-
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && previewModal.classList.contains('active')) {
-      closePreview();
-    }
-  });
-
+  window.closePreview = function() {
+    document.getElementById('preview-modal').classList.remove('active');
+  };
 </script>
 </body>
 </html>
