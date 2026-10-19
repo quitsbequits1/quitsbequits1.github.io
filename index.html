@@ -3,108 +3,58 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bdugrhan — Zero Trust Gateway</title>
+<title>Bdugrhan — Secure Vault</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #09090b;
-    --surface: #121215;
-    --border: #27272a;
-    --text: #fafafa;
-    --muted: #a1a1aa;
+    --bg: #050507;
+    --surface: #0d0d12;
+    --border: #1f1f27;
+    --text: #f4f4f5;
+    --muted: #71717a;
     --danger: #ef4444;
     --success: #10b981;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  
   body {
-    background-color: var(--bg);
-    color: var(--text);
-    font-family: 'Inter', sans-serif;
-    height: 100vh;
-    overflow: hidden;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    /* Sağ tık ve metin seçimi koruması (Deterrent) */
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
+    background-color: var(--bg); color: var(--text); font-family: 'Inter', sans-serif;
+    height: 100vh; overflow: hidden; display: flex; justify-content: center; align-items: center;
+    user-select: none; -webkit-user-select: none;
   }
 
-  /* ================= EKRAN YÖNETİMİ ================= */
   .screen {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.4s ease;
-    padding: 20px;
+    position: absolute; inset: 0; display: flex; flex-direction: column;
+    justify-content: center; align-items: center; opacity: 0; pointer-events: none;
+    transition: opacity 0.4s ease; padding: 20px;
   }
-  .screen.active {
-    opacity: 1;
-    pointer-events: auto;
-    z-index: 10;
-  }
+  .screen.active { opacity: 1; pointer-events: auto; z-index: 10; }
 
-  /* --- HOŞGELDİN --- */
+  /* Hoşgeldin */
   #welcome-screen { cursor: pointer; }
-  .welcome-logo {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: clamp(3rem, 8vw, 6rem);
-    font-weight: 700; letter-spacing: -3px; margin-bottom: 10px;
-  }
-  .welcome-sub {
-    color: var(--muted); font-size: 0.85rem; letter-spacing: 5px; text-transform: uppercase; margin-bottom: 50px;
-  }
-  .welcome-hint {
-    font-size: 0.9rem; color: #fff; padding: 10px 24px; border: 1px solid var(--border); border-radius: 100px;
-    animation: pulseBorder 2s infinite ease-in-out;
-  }
-  @keyframes pulseBorder {
-    0%, 100% { border-color: var(--border); }
-    50% { border-color: #555; }
-  }
+  .welcome-logo { font-family: 'Space Grotesk', sans-serif; font-size: clamp(3rem, 8vw, 6rem); font-weight: 700; letter-spacing: -3px; margin-bottom: 10px; }
+  .welcome-sub { color: var(--muted); font-size: 0.85rem; letter-spacing: 5px; text-transform: uppercase; margin-bottom: 50px; }
+  .welcome-hint { font-size: 0.9rem; color: #fff; padding: 10px 24px; border: 1px solid var(--border); border-radius: 100px; animation: pulseBorder 2s infinite ease-in-out; }
+  @keyframes pulseBorder { 0%, 100% { border-color: var(--border); } 50% { border-color: #555; } }
 
-  /* --- AUTH (GİRİŞ) EKRANI --- */
+  /* Auth */
   #auth-screen { background: var(--bg); z-index: 20; }
-  .auth-box {
-    width: 100%; max-width: 450px; background: var(--surface);
-    border: 1px solid var(--border); border-radius: 16px; padding: 40px;
-  }
+  .auth-box { width: 100%; max-width: 450px; background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 40px; }
   .auth-header { text-align: center; margin-bottom: 30px; }
   .auth-header h2 { font-family: 'Space Grotesk', sans-serif; font-size: 1.5rem; margin-bottom: 10px; }
   .auth-header p { color: var(--muted); font-size: 0.85rem; }
 
-  .device-fingerprint {
-    background: #0a0a0c; border: 1px solid var(--border); border-radius: 8px;
-    padding: 15px; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center;
-  }
+  .device-fingerprint { background: #000; border: 1px solid var(--border); border-radius: 8px; padding: 15px; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center; }
   .device-info { font-size: 0.75rem; color: var(--muted); }
   .device-info strong { color: #fff; font-family: 'Fira Code', monospace; display: block; margin-top: 4px; word-break: break-all; }
-  .device-status {
-    font-size: 0.7rem; font-weight: 600; padding: 4px 10px; border-radius: 4px;
-    background: rgba(16, 185, 129, 0.1); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.2);
-  }
+  .device-status { font-size: 0.7rem; font-weight: 600; padding: 4px 10px; border-radius: 4px; background: rgba(16, 185, 129, 0.1); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.2); }
 
   .input-group { margin-bottom: 20px; }
   .input-group label { display: block; font-size: 0.8rem; color: var(--muted); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
-  .input-group input {
-    width: 100%; padding: 15px; background: #000; border: 1px solid var(--border);
-    border-radius: 8px; color: #fff; font-family: 'Fira Code', monospace; font-size: 1rem; outline: none; transition: border-color 0.2s;
-  }
+  .input-group input { width: 100%; padding: 15px; background: #000; border: 1px solid var(--border); border-radius: 8px; color: #fff; font-family: 'Fira Code', monospace; font-size: 1rem; outline: none; transition: border-color 0.2s; }
   .input-group input:focus { border-color: #555; }
   
-  .submit-btn {
-    width: 100%; padding: 15px; background: var(--text); color: var(--bg);
-    border: none; border-radius: 8px; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 1rem; cursor: pointer; transition: background 0.2s;
-  }
+  .submit-btn { width: 100%; padding: 15px; background: var(--text); color: var(--bg); border: none; border-radius: 8px; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 1rem; cursor: pointer; transition: background 0.2s; }
   .submit-btn:hover { background: #d4d4d8; }
   .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
@@ -112,55 +62,36 @@
   .attempts-left { text-align: center; font-size: 0.8rem; color: var(--muted); margin-top: 20px; }
   .attempts-left span { color: var(--danger); font-weight: 600; }
 
-  /* --- KİLİTLENDİ --- */
+  /* Blocked */
   #blocked-screen { background: #000; z-index: 30; }
-  .blocked-icon {
-    width: 60px; height: 60px; background: var(--danger); color: #000; border-radius: 50%;
-    display: flex; justify-content: center; align-items: center; font-size: 2rem; font-weight: bold; margin-bottom: 20px;
-  }
+  .blocked-icon { width: 60px; height: 60px; background: var(--danger); color: #000; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 2rem; font-weight: bold; margin-bottom: 20px; }
   .blocked-text { font-family: 'Space Grotesk', sans-serif; font-size: 1.8rem; color: var(--danger); margin-bottom: 10px; }
   .blocked-sub { color: var(--muted); font-size: 0.9rem; text-align: center; max-width: 400px; line-height: 1.6; }
 
-  /* --- KÜTÜPHANE (UYGULAMA) --- */
+  /* App */
   #app-screen { display: block; padding: 40px 5vw; overflow-y: auto; align-items: flex-start; justify-content: flex-start; }
-  
-  header {
-    display: flex; justify-content: space-between; align-items: center;
-    border-bottom: 1px solid var(--border); padding-bottom: 20px; margin-bottom: 30px; flex-wrap: wrap; gap: 20px;
-  }
+  header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 20px; margin-bottom: 30px; flex-wrap: wrap; gap: 20px; }
   .logo { font-family: 'Space Grotesk', sans-serif; font-size: 1.5rem; font-weight: 700; letter-spacing: -1px; display: flex; align-items: center; gap: 8px; }
   .logo-dot { width: 8px; height: 8px; background: var(--text); border-radius: 50%; }
 
   .header-actions { display: flex; gap: 15px; align-items: center; flex-wrap: wrap; }
-  .storage-widget {
-    display: flex; flex-direction: column; gap: 6px; background: var(--surface);
-    border: 1px solid var(--border); padding: 10px 15px; border-radius: 8px; min-width: 250px;
-  }
+  .storage-widget { display: flex; flex-direction: column; gap: 6px; background: var(--surface); border: 1px solid var(--border); padding: 10px 15px; border-radius: 8px; min-width: 250px; }
   .storage-text { font-size: 0.75rem; color: var(--muted); display: flex; justify-content: space-between; }
   .storage-text strong { color: var(--text); }
   .storage-bar-bg { width: 100%; height: 3px; background: #27272a; border-radius: 10px; overflow: hidden; margin-top: 4px; }
   .storage-bar-fill { height: 100%; background: var(--text); width: 0%; transition: width 0.5s; }
 
-  .btn-lock {
-    background: transparent; border: 1px solid var(--border); color: var(--text);
-    padding: 12px 20px; border-radius: 8px; cursor: pointer; font-weight: 500; font-size: 0.9rem; transition: 0.2s;
-  }
+  .btn-lock { background: transparent; border: 1px solid var(--border); color: var(--text); padding: 12px 20px; border-radius: 8px; cursor: pointer; font-weight: 500; font-size: 0.9rem; transition: 0.2s; }
   .btn-lock:hover { background: var(--surface); }
 
-  .dropzone {
-    border: 1px dashed var(--border); border-radius: 12px; padding: 40px 20px;
-    text-align: center; background: var(--surface); cursor: pointer; margin-bottom: 30px; transition: border-color 0.2s;
-  }
+  .dropzone { border: 1px dashed var(--border); border-radius: 12px; padding: 40px 20px; text-align: center; background: var(--surface); cursor: pointer; margin-bottom: 30px; transition: border-color 0.2s; }
   .dropzone:hover, .dropzone.dragover { border-color: #555; }
   .dropzone-icon { font-size: 2rem; color: var(--muted); margin-bottom: 15px; }
   .dropzone h3 { font-size: 1rem; margin-bottom: 8px; font-weight: 500; }
   .dropzone p { color: var(--muted); font-size: 0.85rem; }
   .dropzone input { display: none; }
 
-  #progress-container {
-    display: none; background: var(--surface); border: 1px solid var(--border);
-    border-radius: 8px; padding: 15px; margin-bottom: 20px;
-  }
+  #progress-container { display: none; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 15px; margin-bottom: 20px; }
   #progress-container.show { display: block; }
   .progress-label { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.8rem; color: var(--muted); }
   .progress-bar-bg { width: 100%; height: 3px; background: #27272a; border-radius: 10px; overflow: hidden; }
@@ -171,123 +102,77 @@
   .file-count { color: var(--muted); font-size: 0.85rem; }
   #file-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px; }
 
-  .file-card {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 10px; padding: 20px; display: flex; flex-direction: column; transition: border-color 0.2s;
-  }
+  .file-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px; display: flex; flex-direction: column; transition: border-color 0.2s; }
   .file-card:hover { border-color: #3f3f46; }
-  
-  .file-icon-badge {
-    width: 35px; height: 35px; border-radius: 6px; background: #27272a; color: var(--muted);
-    display: flex; justify-content: center; align-items: center;
-    font-family: 'Fira Code', monospace; font-weight: 600; font-size: 0.7rem; margin-bottom: 15px;
-  }
+  .file-icon-badge { width: 35px; height: 35px; border-radius: 6px; background: #27272a; color: var(--muted); display: flex; justify-content: center; align-items: center; font-family: 'Fira Code', monospace; font-weight: 600; font-size: 0.7rem; margin-bottom: 15px; }
   .file-name { font-weight: 500; font-size: 0.95rem; margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .file-size { color: var(--muted); font-size: 0.8rem; margin-bottom: 20px; font-family: 'Fira Code', monospace; }
 
   .file-actions { display: flex; gap: 8px; margin-top: auto; }
-  .file-actions button {
-    flex: 1; padding: 8px; border-radius: 6px; border: 1px solid var(--border);
-    background: transparent; color: var(--text); font-size: 0.75rem; font-weight: 500; cursor: pointer; transition: all 0.2s;
-  }
+  .file-actions button { flex: 1; padding: 8px; border-radius: 6px; border: 1px solid var(--border); background: transparent; color: var(--text); font-size: 0.75rem; font-weight: 500; cursor: pointer; transition: all 0.2s; }
   .btn-preview:hover { border-color: var(--text); }
   .btn-download:hover { border-color: var(--success); color: var(--success); }
   .btn-delete:hover { border-color: var(--danger); color: var(--danger); }
 
   .empty-state { grid-column: 1 / -1; text-align: center; padding: 40px; color: var(--muted); border: 1px dashed var(--border); border-radius: 8px; font-size: 0.9rem; }
 
-  /* Toast */
-  #toast {
-    position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px);
-    background: var(--text); color: var(--bg); padding: 12px 24px; border-radius: 6px;
-    font-weight: 600; font-size: 0.85rem; opacity: 0; transition: all 0.3s ease; z-index: 10000; pointer-events: none;
-  }
+  #toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--text); color: var(--bg); padding: 12px 24px; border-radius: 6px; font-weight: 600; font-size: 0.85rem; opacity: 0; transition: all 0.3s ease; z-index: 10000; pointer-events: none; }
   #toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
   #toast.error { background: var(--danger); color: #fff; }
 
-  /* Önizleme Modalı */
-  #preview-modal {
-    position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 5000;
-    display: none; justify-content: center; align-items: center; padding: 20px;
-  }
+  #preview-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 5000; display: none; justify-content: center; align-items: center; padding: 20px; }
   #preview-modal.active { display: flex; }
-  .preview-content {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 12px; width: 100%; max-width: 900px; height: 90vh;
-    display: flex; flex-direction: column; overflow: hidden;
-  }
-  .preview-header {
-    padding: 20px 25px; border-bottom: 1px solid var(--border);
-    display: flex; justify-content: space-between; align-items: center; background: #0a0a0c;
-  }
+  .preview-content { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; width: 100%; max-width: 900px; height: 90vh; display: flex; flex-direction: column; overflow: hidden; }
+  .preview-header { padding: 20px 25px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: #0a0a0c; }
   .preview-header-left { display: flex; flex-direction: column; gap: 5px; }
   .preview-header h3 { font-size: 1.1rem; word-break: break-all; font-weight: 600; color: #fff; }
   .preview-header span { font-size: 0.8rem; color: var(--muted); font-family: 'Fira Code', monospace; }
-  
-  .btn-back {
-    display: flex; align-items: center; gap: 8px;
-    background: transparent; border: 1px solid var(--border); color: #fff;
-    padding: 8px 16px; border-radius: 6px; cursor: pointer; font-family: 'Inter', sans-serif; font-size: 0.85rem; transition: background 0.2s;
-  }
+  .btn-back { display: flex; align-items: center; gap: 8px; background: transparent; border: 1px solid var(--border); color: #fff; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-family: 'Inter', sans-serif; font-size: 0.85rem; transition: background 0.2s; }
   .btn-back:hover { background: #27272a; }
-
   .preview-body { padding: 25px; overflow-y: auto; flex: 1; background: #000; display: flex; flex-direction: column; justify-content: flex-start; }
   .preview-body pre { font-family: 'Fira Code', monospace; font-size: 0.9rem; line-height: 1.6; color: #d4d4d8; white-space: pre; word-wrap: normal; overflow-x: auto; }
   .preview-body img { max-width: 100%; max-height: 100%; object-fit: contain; display: block; margin: auto; border-radius: 4px; }
-  .preview-warning { color: var(--muted); font-size: 0.85rem; margin-top: 20px; padding: 15px; background: #121215; border: 1px solid var(--border); border-radius: 8px; text-align: center; }
 </style>
 </head>
 <body>
 
-<!-- 1. HOŞGELDİN -->
 <div class="screen active" id="welcome-screen" onclick="goToAuth()">
   <div class="welcome-logo">Bdugrhan</div>
-  <div class="welcome-sub">Zero Trust Gateway</div>
+  <div class="welcome-sub">Secure Vault</div>
   <div class="welcome-hint">Sisteme erişmek için tıkla</div>
 </div>
 
-<!-- 2. KİLİT EKRANI -->
 <div class="screen" id="auth-screen">
   <div class="auth-box">
     <div class="auth-header">
-      <h2>AES-256 Şifreli Erişim</h2>
+      <h2>Gizli Erişim</h2>
       <p>Erişim için yetkili kodu girin.</p>
     </div>
-
     <div class="device-fingerprint">
       <div class="device-info">
-        CİHAZ PARMAK İZİ (HASH)
+        CİHAZ PARMAK İZİ
         <strong id="fingerprint-text">Hesaplanıyor...</strong>
       </div>
       <div class="device-status" id="device-status">GÜVENLİ</div>
     </div>
-
     <div class="error-msg" id="error-msg"></div>
-
     <div class="input-group">
-      <label>Yetkili Erişim Kodu</label>
-      <input type="password" id="auth-code" placeholder="Burahan!..." autocomplete="off" onkeypress="handleEnter(event)">
+      <label>Erişim Kodu</label>
+      <input type="password" id="auth-code" placeholder="••••••••••••••••" autocomplete="off" onkeypress="handleEnter(event)">
     </div>
-
     <button class="submit-btn" id="submit-btn" onclick="verifyAuth()">Kilidi Aç</button>
-
     <div class="attempts-left" id="attempts-display">
       Kalan Deneme Hakkı: <span id="attempts-count">4</span>
     </div>
   </div>
 </div>
 
-<!-- 3. KİLİTLENDİ EKRANI -->
 <div class="screen" id="blocked-screen">
   <div class="blocked-icon">✕</div>
   <div class="blocked-text">Cihaz Kilitlendi</div>
-  <div class="blocked-sub">
-    Zero Trust protokolü gereği, bu cihazdan çok fazla başarısız deneme yapıldı. <br><br>
-    Erişim kalıcı olarak engellendi.
-  </div>
+  <div class="blocked-sub">Zero Trust protokolü gereği, çok fazla başarısız deneme yapıldı. Erişim engellendi.</div>
 </div>
 
-<!-- 4. UYGULAMA (KÜTÜPHANE) -->
 <div class="screen" id="app-screen">
   <header>
     <div class="logo">Bdugrhan <div class="logo-dot"></div></div>
@@ -305,17 +190,15 @@
 
   <div id="library-section" style="width:100%;">
     <div id="progress-container">
-      <div class="progress-label"><span id="progressFileName">Şifreleniyor ve Yükleniyor...</span><span id="progressPercent">0%</span></div>
+      <div class="progress-label"><span id="progressFileName">Şifreleniyor...</span><span id="progressPercent">0%</span></div>
       <div class="progress-bar-bg"><div class="progress-bar-fill" id="progressBar"></div></div>
     </div>
-
     <div class="dropzone" id="dropzone">
       <input type="file" id="fileInput" multiple>
       <div class="dropzone-icon">↓</div>
       <h3>Dosyaları sürükle veya tıkla</h3>
-      <p>AES-256 ile şifrelenerek saklanır. (Sınırsız)</p>
+      <p>Askeri düzey şifreleme ile saklanır. (Sınırsız)</p>
     </div>
-
     <div class="file-list-header">
       <h2>Yüklenen Dosyalar</h2>
       <span class="file-count" id="fileCount">0 dosya</span>
@@ -324,10 +207,8 @@
   </div>
 </div>
 
-<!-- Toast -->
 <div id="toast"></div>
 
-<!-- Önizleme Modalı -->
 <div id="preview-modal">
   <div class="preview-content">
     <div class="preview-header">
@@ -342,16 +223,15 @@
 </div>
 
 <script>
-  // ================= ZERO TRUST & ENCRYPTION =================
-  const SECRET_HASH = "QnVyYWhhbiEyNzU4Mjc1ODAwMzc0NjI1OTczNjQ="; // Burahan!275827580037462597364
-  const DB_NAME = 'Bdugrhan_AES_Encrypted';
-  const STORE_NAME = 'files';
-  const MAX_ATTEMPTS = 4;
+  // --- GİZLENMİŞ GÜVENLİK ANAHTARLARI ---
+  const _0x4f2a = "QnVyYWhhbiEyNzU4Mjc1ODAwMzc0NjI1OTczNjQ="; // Şifre
+  const _0x1a3b = 'Bdugrhan_Vault_DB'; // DB Adı
+  const _0x9c8d = 'vault_store'; // Store Adı
+  const _0x7e6f = 4; // Max Deneme
 
-  let db = null;
-  let masterKey = null; // Dosyaları şifrelemek/çözmek için kullanılacak anahtar
+  let _0x2b4c = null;
+  let _0x5d1e = null; // Master Key
 
-  // 1. Cihaz Parmak İzi (Fingerprint)
   function generateFingerprint() {
     const nav = window.navigator;
     const screen = window.screen;
@@ -365,18 +245,18 @@
     return Math.abs(hash).toString(16).toUpperCase();
   }
 
-  const DEVICE_ID = generateFingerprint();
-  document.getElementById('fingerprint-text').innerText = DEVICE_ID;
+  const _0x3f4a = generateFingerprint();
+  document.getElementById('fingerprint-text').innerText = _0x3f4a;
 
-  let attempts = parseInt(localStorage.getItem('zt_attempts_' + DEVICE_ID) || '0');
-  document.getElementById('attempts-count').innerText = MAX_ATTEMPTS - attempts;
+  let _0x6b2c = parseInt(localStorage.getItem('_zt_' + _0x3f4a) || '0');
+  document.getElementById('attempts-count').innerText = _0x7e6f - _0x6b2c;
 
-  if (attempts >= MAX_ATTEMPTS) {
+  if (_0x6b2c >= _0x7e6f) {
     document.getElementById('welcome-screen').classList.remove('active');
     document.getElementById('blocked-screen').classList.add('active');
   }
 
-  // Sağ Tık ve Kısayol Engelleme (Basit Caydırıcı)
+  // Sağ Tık ve Kısayol Engelleme
   document.addEventListener('contextmenu', e => e.preventDefault());
   document.addEventListener('keydown', e => {
     if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key === 'I') || (e.ctrlKey && e.key === 'u')) {
@@ -384,16 +264,15 @@
     }
   });
 
-  // 2. Crypto API (Şifreleme Motoru)
-  async function deriveKey(password) {
+  // --- GİZLİ ŞİFRELEME MOTORU ---
+  async function _0x8a1b(password) {
     const enc = new TextEncoder();
     const keyMaterial = await crypto.subtle.importKey(
       "raw", enc.encode(password), { name: "PBKDF2" }, false, ["deriveBits", "deriveKey"]
     );
-    // Tuz (Salt) değeri cihaza özel olsun ki her cihazda farklı anahtar üretsin
-    const salt = enc.encode(DEVICE_ID); 
+    const salt = enc.encode(_0x3f4a); 
     return crypto.subtle.deriveKey(
-      { name: "PBKDF2", salt: salt, iterations: 100000, hash: "SHA-256" },
+      { name: "PBKDF2", salt: salt, iterations: 200000, hash: "SHA-256" },
       keyMaterial,
       { name: "AES-GCM", length: 256 },
       false,
@@ -401,40 +280,36 @@
     );
   }
 
-  async function encryptData(data, key) {
+  async function _0x4c9d(data, key) {
     const iv = crypto.getRandomValues(new Uint8Array(12));
     const ciphertext = await crypto.subtle.encrypt({ name: "AES-GCM", iv }, key, data);
     return { iv, ciphertext };
   }
 
-  async function decryptData(ciphertext, iv, key) {
+  async function _0x1e7f(ciphertext, iv, key) {
     return await crypto.subtle.decrypt({ name: "AES-GCM", iv }, key, ciphertext);
   }
 
-  // 3. Ekran Geçişleri
+  // --- EKRAN GEÇİŞLERİ ---
   function goToAuth() {
-    if (attempts >= MAX_ATTEMPTS) return;
+    if (_0x6b2c >= _0x7e6f) return;
     document.getElementById('welcome-screen').classList.remove('active');
     document.getElementById('auth-screen').classList.add('active');
     setTimeout(() => document.getElementById('auth-code').focus(), 100);
   }
 
-  // 4. Kimlik Doğrulama
   async function verifyAuth() {
     const input = document.getElementById('auth-code').value;
     const errorMsg = document.getElementById('error-msg');
     const btn = document.getElementById('submit-btn');
 
-    // Girdiyi Base64 ile karşılaştır
-    if (btoa(input) === SECRET_HASH) {
+    if (btoa(input) === _0x4f2a) {
       errorMsg.innerText = "";
       document.getElementById('device-status').innerText = "DOĞRULANDI";
       document.getElementById('device-status').style.background = "rgba(255,255,255,0.1)";
       
-      // Şifreleme Anahtarını üret
-      masterKey = await deriveKey(input);
-      
-      localStorage.setItem('zt_attempts_' + DEVICE_ID, '0');
+      _0x5d1e = await _0x8a1b(input);
+      localStorage.setItem('_zt_' + _0x3f4a, '0');
       
       setTimeout(() => {
         document.getElementById('auth-screen').classList.remove('active');
@@ -443,13 +318,13 @@
       }, 500);
 
     } else {
-      attempts++;
-      localStorage.setItem('zt_attempts_' + DEVICE_ID, attempts);
-      const remaining = MAX_ATTEMPTS - attempts;
+      _0x6b2c++;
+      localStorage.setItem('_zt_' + _0x3f4a, _0x6b2c);
+      const remaining = _0x7e6f - _0x6b2c;
       document.getElementById('attempts-count').innerText = remaining;
 
-      if (attempts >= MAX_ATTEMPTS) {
-        errorMsg.innerText = "Kritik Hata: Cihaz kilitleniyor...";
+      if (_0x6b2c >= _0x7e6f) {
+        errorMsg.innerText = "Sistem kilitleniyor...";
         btn.disabled = true;
         setTimeout(() => {
           document.getElementById('auth-screen').classList.remove('active');
@@ -465,48 +340,45 @@
     }
   }
 
-  function handleEnter(e) {
-    if (e.key === 'Enter') verifyAuth();
-  }
+  function handleEnter(e) { if (e.key === 'Enter') verifyAuth(); }
 
-  // 5. Sistem Kilitleme (Log out)
   function lockSystem() {
-    masterKey = null; // Anahtarı bellekten sil
+    _0x5d1e = null;
     document.getElementById('app-screen').classList.remove('active');
     document.getElementById('welcome-screen').classList.add('active');
     document.getElementById('auth-code').value = '';
-    document.getElementById('file-list').innerHTML = ''; // Arayüzü temizle
+    document.getElementById('file-list').innerHTML = '';
   }
 
-  // ================= INDEXEDDB KURULUMU =================
+  // --- VERİTABANI ---
   function openDB() {
     return new Promise((resolve, reject) => {
-      const request = indexedDB.open(DB_NAME, 1);
+      const request = indexedDB.open(_0x1a3b, 1);
       request.onupgradeneeded = (e) => {
-        if (!e.target.result.objectStoreNames.contains(STORE_NAME)) {
-          e.target.result.createObjectStore(STORE_NAME, { keyPath: 'id' });
+        if (!e.target.result.objectStoreNames.contains(_0x9c8d)) {
+          e.target.result.createObjectStore(_0x9c8d, { keyPath: 'id' });
         }
       };
-      request.onsuccess = (e) => { db = e.target.result; resolve(db); };
+      request.onsuccess = (e) => { _0x2b4c = e.target.result; resolve(_0x2b4c); };
       request.onerror = (e) => reject(e.target.error);
     });
   }
 
   const addFileToDB = (fileObj) => new Promise((res, rej) => {
-    const tx = db.transaction(STORE_NAME, 'readwrite');
-    const req = tx.objectStore(STORE_NAME).add(fileObj);
+    const tx = _0x2b4c.transaction(_0x9c8d, 'readwrite');
+    const req = tx.objectStore(_0x9c8d).add(fileObj);
     req.onsuccess = () => res(); req.onerror = () => rej(req.error);
   });
 
   const getAllFiles = () => new Promise((res, rej) => {
-    const tx = db.transaction(STORE_NAME, 'readonly');
-    const req = tx.objectStore(STORE_NAME).getAll();
+    const tx = _0x2b4c.transaction(_0x9c8d, 'readonly');
+    const req = tx.objectStore(_0x9c8d).getAll();
     req.onsuccess = () => res(req.result || []); req.onerror = () => rej(req.error);
   });
 
   const deleteFileFromDB = (id) => new Promise((res, rej) => {
-    const tx = db.transaction(STORE_NAME, 'readwrite');
-    const req = tx.objectStore(STORE_NAME).delete(id);
+    const tx = _0x2b4c.transaction(_0x9c8d, 'readwrite');
+    const req = tx.objectStore(_0x9c8d).delete(id);
     req.onsuccess = () => res(); req.onerror = () => rej(req.error);
   });
 
@@ -524,7 +396,6 @@
 
   if (navigator.storage && navigator.storage.persist) navigator.storage.persist();
 
-  // UI Elementleri
   const dropzone = document.getElementById('dropzone');
   const fileInput = document.getElementById('fileInput');
   const fileList = document.getElementById('file-list');
@@ -560,7 +431,6 @@
     return (bytes / 1073741824).toFixed(2) + ' GB';
   }
 
-  // ================= YÜKLEME VE ŞİFRELEME =================
   dropzone.addEventListener('click', () => fileInput.click());
   dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('dragover'); });
   dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
@@ -574,7 +444,7 @@
   });
 
   async function handleFiles(filesArray) {
-    if (!masterKey) return showToast("Önce sisteme giriş yapmalısın!", true);
+    if (!_0x5d1e) return showToast("Önce giriş yap!", true);
     
     const files = Array.from(filesArray);
     if (files.length === 0) return;
@@ -588,16 +458,15 @@
       
       try {
         const buffer = await file.arrayBuffer();
-        // Dosyayı AES-256-GCM ile şifrele
-        const { iv, ciphertext } = await encryptData(buffer, masterKey);
+        const { iv, ciphertext } = await _0x4c9d(buffer, _0x5d1e);
         
         const fileObj = {
           id: Date.now() + '_' + Math.random().toString(36).substr(2, 9),
           name: file.name,
           type: file.type || 'application/octet-stream',
           size: file.size,
-          encryptedData: ciphertext, // Şifreli içerik
-          iv: iv,                    // Şifre çözme vektörü
+          data: ciphertext,
+          iv: iv,
           createdAt: Date.now()
         };
 
@@ -607,8 +476,7 @@
         progressBar.style.width = percent + '%';
         progressPercent.innerText = percent + '%';
       } catch (e) {
-        console.error(e);
-        showToast(`${file.name} şifrelenemedi!`, true);
+        showToast(`${file.name} yüklenemedi!`, true);
       }
     }
 
@@ -621,7 +489,6 @@
     showToast(`${files.length} dosya şifrelenerek eklendi.`);
   }
 
-  // ================= LİSTELEME =================
   async function loadFiles() {
     currentFiles = await getAllFiles();
     currentFiles.sort((a, b) => b.createdAt - a.createdAt);
@@ -633,7 +500,7 @@
     fileCount.innerText = currentFiles.length + ' dosya';
 
     if (currentFiles.length === 0) {
-      fileList.innerHTML = `<div class="empty-state">Kütüphane boş. Dosya ekle.</div>`;
+      fileList.innerHTML = `<div class="empty-state">Kütüphane boş.</div>`;
       return;
     }
 
@@ -658,14 +525,13 @@
     });
   }
 
-  // ================= ŞİFRE ÇÖZME VE İNDİRME =================
   async function downloadFile(id) {
-    if (!masterKey) return;
+    if (!_0x5d1e) return;
     const file = currentFiles.find(f => f.id === id);
     if (!file) return;
     
     try {
-      const decryptedBuffer = await decryptData(file.encryptedData, file.iv, masterKey);
+      const decryptedBuffer = await _0x1e7f(file.data, file.iv, _0x5d1e);
       const blob = new Blob([decryptedBuffer], { type: file.type });
       const url = URL.createObjectURL(blob);
       
@@ -673,9 +539,9 @@
       a.href = url; a.download = file.name;
       document.body.appendChild(a); a.click(); document.body.removeChild(a);
       setTimeout(() => URL.revokeObjectURL(url), 1000);
-      showToast(`${file.name} çözüldü ve indiriliyor.`);
+      showToast(`${file.name} çözüldü.`);
     } catch (e) {
-      showToast("Dosya çözülemedi! Anahtar hatalı.", true);
+      showToast("Dosya çözülemedi!", true);
     }
   }
 
@@ -687,20 +553,18 @@
     showToast('Silindi.');
   }
 
-  // ================= ÖNİZLEME (DECRYPT) =================
   async function previewFile(id) {
-    if (!masterKey) return;
+    if (!_0x5d1e) return;
     const file = currentFiles.find(f => f.id === id);
     if (!file) return;
 
     document.getElementById('preview-title').innerText = file.name;
-    document.getElementById('preview-info').innerText = `${formatSize(file.size)} | Şifreli Veri`;
+    document.getElementById('preview-info').innerText = `${formatSize(file.size)}`;
     previewBody.innerHTML = 'Deşifre ediliyor...';
     previewModal.classList.add('active');
 
     try {
-      // Şifreyi çöz
-      const decryptedBuffer = await decryptData(file.encryptedData, file.iv, masterKey);
+      const decryptedBuffer = await _0x1e7f(file.data, file.iv, _0x5d1e);
       
       const isImage = file.type.startsWith('image/');
       const isText = file.name.match(/\.(lua|py|js|html|css|json|txt|md|xml|sh|bat|c|cpp|h|java|php|rb|go|rs|cs|swift|kt|log|ini|cfg|yml|yaml)$/i) || file.type.includes('text');
@@ -730,10 +594,10 @@
         previewBody.innerHTML = '';
         previewBody.appendChild(pre);
       } else {
-        previewBody.innerHTML = `<div class="preview-warning">Bu tür tarayıcıda önizlenemez. İndir butonunu kullanın.</div>`;
+        previewBody.innerHTML = `<div class="preview-warning">Bu tür önizlenemez.</div>`;
       }
     } catch (e) {
-      previewBody.innerHTML = `<div class="preview-warning" style="color:var(--danger)">Şifre çözülemedi! Veri bozuk veya anahtar hatalı.</div>`;
+      previewBody.innerHTML = `<div class="preview-warning" style="color:var(--danger)">Şifre çözülemedi! Anahtar hatalı.</div>`;
     }
   }
 
@@ -753,6 +617,5 @@
   });
 
 </script>
-
 </body>
 </html>
