@@ -3,475 +3,756 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Buğrahan — Giriş</title>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<title>Bdugrhan — Zero Trust Gateway</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #000;
-    --text: #fff;
-    --red: #dc2626;
-    --orange: #ea580c;
-    --green: #10b981;
-    --muted: #888;
+    --bg: #09090b;
+    --surface: #121215;
+    --border: #27272a;
+    --text: #fafafa;
+    --muted: #a1a1aa;
+    --danger: #ef4444;
+    --success: #10b981;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body {
-    background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif;
-    overflow: hidden; height: 100vh;
-  }
-
-  .cinematic-intro {
-    position: fixed; inset: 0; z-index: 99999; background: #000;
-    overflow: hidden; display: flex; flex-direction: column; justify-content: center; align-items: center;
-    transition: opacity 1.5s ease, visibility 1.5s ease;
-  }
-  .cinematic-intro.hidden { opacity: 0; visibility: hidden; }
-
-  .bg-stars {
-    position: absolute; inset: 0;
-    background-image: 
-      radial-gradient(1px 1px at 10% 20%, rgba(255,255,255,0.3), transparent),
-      radial-gradient(1px 1px at 40% 60%, rgba(255,255,255,0.4), transparent),
-      radial-gradient(2px 2px at 70% 30%, rgba(255,255,255,0.2), transparent),
-      radial-gradient(1px 1px at 90% 80%, rgba(255,255,255,0.5), transparent);
-    background-size: 400px 400px;
-    animation: moveStars 30s linear infinite;
-  }
-  @keyframes moveStars {
-    from { background-position: 0 0; }
-    to { background-position: 400px 400px; }
-  }
-
-  .hud-clock {
-    position: absolute; top: 40px; right: 50px; z-index: 20;
-    display: flex; flex-direction: column; align-items: flex-end; gap: 5px;
-    padding: 15px 25px; background: rgba(15, 15, 20, 0.4);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-right: 3px solid var(--orange); border-radius: 12px;
-    backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-    animation: hudFadeIn 1.5s cubic-bezier(0.16, 1, 0.3, 1) 0.5s both;
-  }
-  @keyframes hudFadeIn { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); } }
-  .clock-time { font-family: 'Space Grotesk', sans-serif; font-size: 2.5rem; font-weight: 700; letter-spacing: 2px; color: #fff; text-shadow: 0 0 15px rgba(255,255,255,0.3); font-variant-numeric: tabular-nums; }
-  .clock-time .colon { color: var(--orange); animation: blinkColon 1s infinite; }
-  @keyframes blinkColon { 0%, 100% { opacity: 1; } 50% { opacity: 0.2; } }
-  .clock-date { font-family: 'Inter', sans-serif; font-size: 0.8rem; color: var(--muted); text-transform: uppercase; letter-spacing: 2px; font-weight: 500; }
-  .clock-location { font-size: 0.7rem; color: var(--orange); font-weight: 600; letter-spacing: 1px; }
-
-  .intro-welcome {
-    position: absolute; z-index: 10; font-family: 'Space Grotesk', sans-serif;
-    font-size: clamp(3rem, 10vw, 8rem); font-weight: 700; letter-spacing: -2px; text-transform: uppercase;
-    background: linear-gradient(135deg, #fff 0%, #fff 40%, var(--orange) 60%, var(--red) 100%);
-    background-size: 200% 200%; -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
-    text-shadow: 0 0 30px rgba(255,255,255,0.2);
-    opacity: 0; filter: blur(20px); transform: scale(1.2);
-    animation: welcomeAppear 2s cubic-bezier(0.16, 1, 0.3, 1) 1s forwards, gradientShift 4s ease infinite alternate 1s;
-  }
-  @keyframes welcomeAppear { 0% { opacity: 0; filter: blur(20px); transform: scale(1.2); } 100% { opacity: 1; filter: blur(0); transform: scale(1); } }
-  @keyframes gradientShift { 0% { background-position: 0% 50%; } 100% { background-position: 100% 50%; } }
-  .intro-welcome.dissolve { animation: none; transition: all 1.5s ease-out; opacity: 0; filter: blur(15px); transform: scale(1.1); }
-
-  .intro-welcome-back {
-    position: absolute; z-index: 12; font-family: 'Space Grotesk', sans-serif;
-    font-size: clamp(2.5rem, 7vw, 5rem); font-weight: 700; letter-spacing: -1px; text-align: center;
-    background: linear-gradient(135deg, var(--orange) 0%, #fff 50%, var(--red) 100%);
-    background-size: 200% 200%; -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
-    text-shadow: 0 0 40px rgba(234, 88, 12, 0.4);
-    opacity: 0; transform: translateY(40px) scale(0.95); filter: blur(10px);
-    transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1); pointer-events: none;
-  }
-  .intro-welcome-back.show { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); animation: gradientShift 3s ease infinite alternate; }
-  .intro-welcome-back.vanish { opacity: 0; transform: translateY(-40px) scale(1.1); filter: blur(15px); transition: all 1s ease-in; }
-
-  #particleCanvas { position: absolute; inset: 0; z-index: 5; pointer-events: none; }
-
-  .status-container {
-    position: absolute; z-index: 15; bottom: 80px;
-    display: flex; flex-direction: column; gap: 12px;
-    font-family: 'Space Grotesk', sans-serif;
-    color: #fff;
-    background: rgba(10, 5, 5, 0.85);
-    padding: 30px 60px;
-    border-radius: 12px;
-    border: 1px solid rgba(220, 38, 38, 0.3);
-    border-left: 4px solid var(--red);
-    backdrop-filter: blur(20px);
-    box-shadow: 0 0 40px rgba(220, 38, 38, 0.15), inset 0 0 20px rgba(220, 38, 38, 0.1);
-    text-align: left;
-    overflow: hidden;
-    
-    opacity: 0;
-    transform: translateY(30px);
-    transition: all 1.5s cubic-bezier(0.16, 1, 0.3, 1);
-  }
-
-  .status-container::before {
-    content: '';
-    position: absolute; top: 0; left: 0; width: 100%; height: 2px;
-    background: rgba(220, 38, 38, 0.5);
-    animation: scanline 3s linear infinite;
-  }
-  @keyframes scanline { 0% { top: -10%; } 100% { top: 110%; } }
-
-  .status-container.show { opacity: 1; transform: translateY(0); }
-
-  .status-title {
-    font-size: 1.8rem;
-    font-weight: 700;
-    letter-spacing: 2px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .dot-online {
-    width: 12px; height: 12px;
-    background: var(--green);
-    border-radius: 50%;
-    box-shadow: 0 0 15px var(--green), 0 0 30px var(--green);
-    animation: pulseGreen 1.5s infinite;
-  }
-  @keyframes pulseGreen { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.3); opacity: 0.6; } }
-
-  .dot-offline {
-    width: 12px; height: 12px;
-    background: var(--red);
-    border-radius: 50%;
-    box-shadow: 0 0 15px var(--red), 0 0 30px var(--red);
-    animation: pulseRed 1s infinite;
-  }
-  @keyframes pulseRed { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.3); opacity: 0.6; } }
-
-  .status-online { color: var(--green); text-shadow: 0 0 15px rgba(16, 185, 129, 0.5); }
-  .status-offline { color: var(--red); text-shadow: 0 0 15px rgba(220, 38, 38, 0.5); }
-
-  .status-sub {
-    font-family: 'Inter', sans-serif;
-    font-size: 1rem;
-    color: #aaa;
-    letter-spacing: 1px;
-  }
-
-  .countdown {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 1.2rem;
-    color: var(--orange);
-    margin-top: 10px;
-    font-weight: 700;
-    background: rgba(234, 88, 12, 0.1);
-    padding: 12px 20px;
-    border-radius: 8px;
-    border: 1px solid rgba(234, 88, 12, 0.3);
-    text-shadow: 0 0 10px rgba(234, 88, 12, 0.5);
-  }
-
-  .main-content { opacity: 0; display: none; transition: opacity 1.5s ease; }
-  .main-content.visible { opacity: 1; display: block; }
-
-  nav { position: fixed; top: 0; left: 0; right: 0; padding: 24px 5vw; display: flex; justify-content: space-between; align-items: center; z-index: 100; }
-  .logo { font-family: 'Space Grotesk', sans-serif; font-size: 1.6rem; font-weight: 700; color: var(--red); }
-  .nav-links a { color: var(--text); text-decoration: none; margin-left: 40px; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; }
-  .nav-links a:hover { color: var(--red); }
-
-  .hero { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; padding: 0 5vw; }
-  h1 { font-family: 'Space Grotesk', sans-serif; font-size: clamp(3.5rem, 11vw, 10rem); font-weight: 700; line-height: 0.9; margin-bottom: 40px; text-transform: uppercase; }
-  h1 span { display: block; background: linear-gradient(135deg, var(--red), var(--orange)); -webkit-background-clip: text; background-clip: text; color: transparent; }
-  .hero-desc { max-width: 550px; font-size: 1.2rem; color: var(--muted); line-height: 1.7; }
-
-  .section { padding: 120px 5vw; max-width: 1200px; margin: 0 auto; }
-  .about-text { font-size: 1.3rem; color: #ddd; line-height: 1.8; max-width: 850px; }
-  .about-text strong { color: var(--red); }
   
-  .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; margin-top: 40px; }
-  .info-card { background: rgba(20,5,5,0.6); border: 1px solid rgba(255,50,50,0.15); border-radius: 20px; padding: 40px; }
-  .info-card-label { font-size: 0.85rem; color: var(--muted); text-transform: uppercase; margin-bottom: 12px; }
-  .info-card-value { font-family: 'Space Grotesk', sans-serif; font-size: 1.8rem; color: #fff; }
-  .tags { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px; }
-  .tag { background: rgba(220,38,38,0.1); color: var(--red); padding: 8px 16px; border-radius: 8px; font-size: 0.9rem; border: 1px solid rgba(220,38,38,0.2); }
+  body {
+    background-color: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* Sağ tık ve metin seçimi koruması (Deterrent) */
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
 
-  .contact-section { padding: 150px 5vw; text-align: center; }
-  .contact-title { font-family: 'Space Grotesk', sans-serif; font-size: clamp(2.5rem, 6vw, 4.5rem); font-weight: 700; margin-bottom: 24px; }
-  .contact-title span { background: linear-gradient(135deg, var(--red), var(--orange)); -webkit-background-clip: text; background-clip: text; color: transparent; }
-  .insta-btn { display: inline-flex; align-items: center; gap: 16px; padding: 24px 60px; background: transparent; color: #fff; border: 2px solid var(--red); border-radius: 100px; font-weight: 700; text-decoration: none; transition: all 0.4s ease; }
-  .insta-btn:hover { background: var(--red); transform: translateY(-5px); box-shadow: 0 20px 50px -10px rgba(220,38,38,0.6); }
-  .insta-btn svg { width: 28px; height: 28px; fill: currentColor; }
+  /* ================= EKRAN YÖNETİMİ ================= */
+  .screen {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+    padding: 20px;
+  }
+  .screen.active {
+    opacity: 1;
+    pointer-events: auto;
+    z-index: 10;
+  }
 
-  footer { padding: 40px 5vw; display: flex; justify-content: space-between; color: var(--muted); font-size: 0.9rem; border-top: 1px solid rgba(255,50,50,0.15); }
+  /* --- HOŞGELDİN --- */
+  #welcome-screen { cursor: pointer; }
+  .welcome-logo {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(3rem, 8vw, 6rem);
+    font-weight: 700; letter-spacing: -3px; margin-bottom: 10px;
+  }
+  .welcome-sub {
+    color: var(--muted); font-size: 0.85rem; letter-spacing: 5px; text-transform: uppercase; margin-bottom: 50px;
+  }
+  .welcome-hint {
+    font-size: 0.9rem; color: #fff; padding: 10px 24px; border: 1px solid var(--border); border-radius: 100px;
+    animation: pulseBorder 2s infinite ease-in-out;
+  }
+  @keyframes pulseBorder {
+    0%, 100% { border-color: var(--border); }
+    50% { border-color: #555; }
+  }
 
-  .reveal { opacity: 0; transform: translateY(40px); transition: all 1.2s ease; }
-  .reveal.active { opacity: 1; transform: translateY(0); }
+  /* --- AUTH (GİRİŞ) EKRANI --- */
+  #auth-screen { background: var(--bg); z-index: 20; }
+  .auth-box {
+    width: 100%; max-width: 450px; background: var(--surface);
+    border: 1px solid var(--border); border-radius: 16px; padding: 40px;
+  }
+  .auth-header { text-align: center; margin-bottom: 30px; }
+  .auth-header h2 { font-family: 'Space Grotesk', sans-serif; font-size: 1.5rem; margin-bottom: 10px; }
+  .auth-header p { color: var(--muted); font-size: 0.85rem; }
+
+  .device-fingerprint {
+    background: #0a0a0c; border: 1px solid var(--border); border-radius: 8px;
+    padding: 15px; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center;
+  }
+  .device-info { font-size: 0.75rem; color: var(--muted); }
+  .device-info strong { color: #fff; font-family: 'Fira Code', monospace; display: block; margin-top: 4px; word-break: break-all; }
+  .device-status {
+    font-size: 0.7rem; font-weight: 600; padding: 4px 10px; border-radius: 4px;
+    background: rgba(16, 185, 129, 0.1); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.2);
+  }
+
+  .input-group { margin-bottom: 20px; }
+  .input-group label { display: block; font-size: 0.8rem; color: var(--muted); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
+  .input-group input {
+    width: 100%; padding: 15px; background: #000; border: 1px solid var(--border);
+    border-radius: 8px; color: #fff; font-family: 'Fira Code', monospace; font-size: 1rem; outline: none; transition: border-color 0.2s;
+  }
+  .input-group input:focus { border-color: #555; }
+  
+  .submit-btn {
+    width: 100%; padding: 15px; background: var(--text); color: var(--bg);
+    border: none; border-radius: 8px; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 1rem; cursor: pointer; transition: background 0.2s;
+  }
+  .submit-btn:hover { background: #d4d4d8; }
+  .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .error-msg { color: var(--danger); font-size: 0.85rem; text-align: center; margin-bottom: 15px; font-weight: 500; min-height: 20px; }
+  .attempts-left { text-align: center; font-size: 0.8rem; color: var(--muted); margin-top: 20px; }
+  .attempts-left span { color: var(--danger); font-weight: 600; }
+
+  /* --- KİLİTLENDİ --- */
+  #blocked-screen { background: #000; z-index: 30; }
+  .blocked-icon {
+    width: 60px; height: 60px; background: var(--danger); color: #000; border-radius: 50%;
+    display: flex; justify-content: center; align-items: center; font-size: 2rem; font-weight: bold; margin-bottom: 20px;
+  }
+  .blocked-text { font-family: 'Space Grotesk', sans-serif; font-size: 1.8rem; color: var(--danger); margin-bottom: 10px; }
+  .blocked-sub { color: var(--muted); font-size: 0.9rem; text-align: center; max-width: 400px; line-height: 1.6; }
+
+  /* --- KÜTÜPHANE (UYGULAMA) --- */
+  #app-screen { display: block; padding: 40px 5vw; overflow-y: auto; align-items: flex-start; justify-content: flex-start; }
+  
+  header {
+    display: flex; justify-content: space-between; align-items: center;
+    border-bottom: 1px solid var(--border); padding-bottom: 20px; margin-bottom: 30px; flex-wrap: wrap; gap: 20px;
+  }
+  .logo { font-family: 'Space Grotesk', sans-serif; font-size: 1.5rem; font-weight: 700; letter-spacing: -1px; display: flex; align-items: center; gap: 8px; }
+  .logo-dot { width: 8px; height: 8px; background: var(--text); border-radius: 50%; }
+
+  .header-actions { display: flex; gap: 15px; align-items: center; flex-wrap: wrap; }
+  .storage-widget {
+    display: flex; flex-direction: column; gap: 6px; background: var(--surface);
+    border: 1px solid var(--border); padding: 10px 15px; border-radius: 8px; min-width: 250px;
+  }
+  .storage-text { font-size: 0.75rem; color: var(--muted); display: flex; justify-content: space-between; }
+  .storage-text strong { color: var(--text); }
+  .storage-bar-bg { width: 100%; height: 3px; background: #27272a; border-radius: 10px; overflow: hidden; margin-top: 4px; }
+  .storage-bar-fill { height: 100%; background: var(--text); width: 0%; transition: width 0.5s; }
+
+  .btn-lock {
+    background: transparent; border: 1px solid var(--border); color: var(--text);
+    padding: 12px 20px; border-radius: 8px; cursor: pointer; font-weight: 500; font-size: 0.9rem; transition: 0.2s;
+  }
+  .btn-lock:hover { background: var(--surface); }
+
+  .dropzone {
+    border: 1px dashed var(--border); border-radius: 12px; padding: 40px 20px;
+    text-align: center; background: var(--surface); cursor: pointer; margin-bottom: 30px; transition: border-color 0.2s;
+  }
+  .dropzone:hover, .dropzone.dragover { border-color: #555; }
+  .dropzone-icon { font-size: 2rem; color: var(--muted); margin-bottom: 15px; }
+  .dropzone h3 { font-size: 1rem; margin-bottom: 8px; font-weight: 500; }
+  .dropzone p { color: var(--muted); font-size: 0.85rem; }
+  .dropzone input { display: none; }
+
+  #progress-container {
+    display: none; background: var(--surface); border: 1px solid var(--border);
+    border-radius: 8px; padding: 15px; margin-bottom: 20px;
+  }
+  #progress-container.show { display: block; }
+  .progress-label { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.8rem; color: var(--muted); }
+  .progress-bar-bg { width: 100%; height: 3px; background: #27272a; border-radius: 10px; overflow: hidden; }
+  .progress-bar-fill { height: 100%; width: 0%; background: var(--text); transition: width 0.1s ease; }
+
+  .file-list-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+  .file-list-header h2 { font-size: 1rem; font-weight: 600; }
+  .file-count { color: var(--muted); font-size: 0.85rem; }
+  #file-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px; }
+
+  .file-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 20px; display: flex; flex-direction: column; transition: border-color 0.2s;
+  }
+  .file-card:hover { border-color: #3f3f46; }
+  
+  .file-icon-badge {
+    width: 35px; height: 35px; border-radius: 6px; background: #27272a; color: var(--muted);
+    display: flex; justify-content: center; align-items: center;
+    font-family: 'Fira Code', monospace; font-weight: 600; font-size: 0.7rem; margin-bottom: 15px;
+  }
+  .file-name { font-weight: 500; font-size: 0.95rem; margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .file-size { color: var(--muted); font-size: 0.8rem; margin-bottom: 20px; font-family: 'Fira Code', monospace; }
+
+  .file-actions { display: flex; gap: 8px; margin-top: auto; }
+  .file-actions button {
+    flex: 1; padding: 8px; border-radius: 6px; border: 1px solid var(--border);
+    background: transparent; color: var(--text); font-size: 0.75rem; font-weight: 500; cursor: pointer; transition: all 0.2s;
+  }
+  .btn-preview:hover { border-color: var(--text); }
+  .btn-download:hover { border-color: var(--success); color: var(--success); }
+  .btn-delete:hover { border-color: var(--danger); color: var(--danger); }
+
+  .empty-state { grid-column: 1 / -1; text-align: center; padding: 40px; color: var(--muted); border: 1px dashed var(--border); border-radius: 8px; font-size: 0.9rem; }
+
+  /* Toast */
+  #toast {
+    position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px);
+    background: var(--text); color: var(--bg); padding: 12px 24px; border-radius: 6px;
+    font-weight: 600; font-size: 0.85rem; opacity: 0; transition: all 0.3s ease; z-index: 10000; pointer-events: none;
+  }
+  #toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+  #toast.error { background: var(--danger); color: #fff; }
+
+  /* Önizleme Modalı */
+  #preview-modal {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 5000;
+    display: none; justify-content: center; align-items: center; padding: 20px;
+  }
+  #preview-modal.active { display: flex; }
+  .preview-content {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; width: 100%; max-width: 900px; height: 90vh;
+    display: flex; flex-direction: column; overflow: hidden;
+  }
+  .preview-header {
+    padding: 20px 25px; border-bottom: 1px solid var(--border);
+    display: flex; justify-content: space-between; align-items: center; background: #0a0a0c;
+  }
+  .preview-header-left { display: flex; flex-direction: column; gap: 5px; }
+  .preview-header h3 { font-size: 1.1rem; word-break: break-all; font-weight: 600; color: #fff; }
+  .preview-header span { font-size: 0.8rem; color: var(--muted); font-family: 'Fira Code', monospace; }
+  
+  .btn-back {
+    display: flex; align-items: center; gap: 8px;
+    background: transparent; border: 1px solid var(--border); color: #fff;
+    padding: 8px 16px; border-radius: 6px; cursor: pointer; font-family: 'Inter', sans-serif; font-size: 0.85rem; transition: background 0.2s;
+  }
+  .btn-back:hover { background: #27272a; }
+
+  .preview-body { padding: 25px; overflow-y: auto; flex: 1; background: #000; display: flex; flex-direction: column; justify-content: flex-start; }
+  .preview-body pre { font-family: 'Fira Code', monospace; font-size: 0.9rem; line-height: 1.6; color: #d4d4d8; white-space: pre; word-wrap: normal; overflow-x: auto; }
+  .preview-body img { max-width: 100%; max-height: 100%; object-fit: contain; display: block; margin: auto; border-radius: 4px; }
+  .preview-warning { color: var(--muted); font-size: 0.85rem; margin-top: 20px; padding: 15px; background: #121215; border: 1px solid var(--border); border-radius: 8px; text-align: center; }
 </style>
 </head>
 <body>
 
-  <!-- SES EFEKTLERİ -->
-  <audio id="ambientSound" loop>
-    <source src="https://www.soundjay.com/halloween/sounds/creepy-wind-01.mp3" type="audio/mpeg">
-  </audio>
-  <audio id="shatterSound">
-    <source src="https://www.soundjay.com/misc/sounds/glass-breaking-01.mp3" type="audio/mpeg">
-  </audio>
-  <audio id="systemSound">
-    <source src="https://www.soundjay.com/button/sounds/button-09.mp3" type="audio/mpeg">
-  </audio>
+<!-- 1. HOŞGELDİN -->
+<div class="screen active" id="welcome-screen" onclick="goToAuth()">
+  <div class="welcome-logo">Bdugrhan</div>
+  <div class="welcome-sub">Zero Trust Gateway</div>
+  <div class="welcome-hint">Sisteme erişmek için tıkla</div>
+</div>
 
-  <!-- SİNEMATİK GİRİŞ EKRANI -->
-  <div class="cinematic-intro" id="cinematicIntro">
-    <div class="bg-stars"></div>
-    
-    <div class="hud-clock">
-      <div class="clock-time" id="clockTime">00<span class="colon">:</span>00</div>
-      <div class="clock-date" id="clockDate">Yükleniyor...</div>
-      <div class="clock-location">İSTANBUL, TR (UTC+3)</div>
+<!-- 2. KİLİT EKRANI -->
+<div class="screen" id="auth-screen">
+  <div class="auth-box">
+    <div class="auth-header">
+      <h2>AES-256 Şifreli Erişim</h2>
+      <p>Erişim için yetkili kodu girin.</p>
     </div>
 
-    <!-- DEĞİŞTİRİLEN YER: "Hoşgeldiniz" -> "Hoşgeldin" -->
-    <div class="intro-welcome" id="welcomeText">Hoşgeldin</div>
-    
-    <div class="intro-welcome-back" id="welcomeBackText">Seni bekliyordum.</div>
-
-    <canvas id="particleCanvas"></canvas>
-
-    <!-- HUD Durum Ekranı -->
-    <div class="status-container" id="statusContainer"></div>
-  </div>
-
-  <!-- ANA SİTE İÇERİĞİ -->
-  <div class="main-content" id="mainContent">
-    <nav>
-      <div class="logo">BUĞRAHAN.</div>
-      <div class="nav-links">
-        <a href="#about">Hakkımda</a>
-        <a href="#contact">İletişim</a>
+    <div class="device-fingerprint">
+      <div class="device-info">
+        CİHAZ PARMAK İZİ (HASH)
+        <strong id="fingerprint-text">Hesaplanıyor...</strong>
       </div>
-    </nav>
+      <div class="device-status" id="device-status">GÜVENLİ</div>
+    </div>
 
-    <section class="hero">
-      <h1 class="reveal">Merhaba,<br><span>Ben Buğrahan.</span></h1>
-      <p class="hero-desc reveal">16 yaşındayım. Script geliştirme, tersine mühendislik, web tasarımı ve oyun içi sistemler üzerine kafa yoruyorum.</p>
-    </section>
+    <div class="error-msg" id="error-msg"></div>
 
-    <section class="section" id="about">
-      <h2 class="reveal" style="font-size: 2rem; margin-bottom: 20px;">Ben Kimim?</h2>
-      <p class="about-text reveal">Ben bir <strong>script kod geliştiricisi, tasarımcı ve reverse engineer</strong>'ım. Oyun mekaniklerini anlamak, sistemleri çözmek ve bunları en modern şekilde koda dökmek benim tutkum.</p>
+    <div class="input-group">
+      <label>Yetkili Erişim Kodu</label>
+      <input type="password" id="auth-code" placeholder="Burahan!..." autocomplete="off" onkeypress="handleEnter(event)">
+    </div>
 
-      <div class="info-grid">
-        <div class="info-card reveal">
-          <div class="info-card-label">Yaş</div>
-          <div class="info-card-value">16</div>
-        </div>
-        <div class="info-card reveal">
-          <div class="info-card-label">Müsait Olduğum Saatler</div>
-          <div class="info-card-value" style="font-size: 1.1rem; line-height: 1.5;">
-            <strong style="color:var(--orange);">Hafta İçi:</strong> 15:30 - 22:00<br>
-            <strong style="color:var(--orange);">Hafta Sonu:</strong> 09:30 - 22:00
-          </div>
-        </div>
-        <div class="info-card reveal">
-          <div class="info-card-label">Aktif Oyunlar</div>
-          <div class="tags"><span class="tag">Roblox</span><span class="tag">Clash Royale</span></div>
-        </div>
-        <div class="info-card reveal">
-          <div class="info-card-label">Uzmanlık</div>
-          <div class="tags"><span class="tag">Script</span><span class="tag">Reverse Eng.</span><span class="tag">Web Tasarım</span></div>
-        </div>
-      </div>
-    </section>
+    <button class="submit-btn" id="submit-btn" onclick="verifyAuth()">Kilidi Aç</button>
 
-    <section class="contact-section" id="contact">
-      <h2 class="contact-title reveal">Bana <span>Ulaş.</span></h2>
-      <a href="https://instagram.com/bu9r44" target="_blank" class="insta-btn reveal">
-        <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
-        <span>@bu9r44</span>
-      </a>
-    </section>
-
-    <footer>
-      <div>© 2026 — Buğrahan.</div>
-      <div>Happy Halloween 🎃</div>
-    </footer>
+    <div class="attempts-left" id="attempts-display">
+      Kalan Deneme Hakkı: <span id="attempts-count">4</span>
+    </div>
   </div>
+</div>
 
-  <script>
-    // --- SES KONTROLÜ ---
-    const ambientSound = document.getElementById('ambientSound');
-    const shatterSound = document.getElementById('shatterSound');
-    const systemSound = document.getElementById('systemSound');
-    let audioInitialized = false;
+<!-- 3. KİLİTLENDİ EKRANI -->
+<div class="screen" id="blocked-screen">
+  <div class="blocked-icon">✕</div>
+  <div class="blocked-text">Cihaz Kilitlendi</div>
+  <div class="blocked-sub">
+    Zero Trust protokolü gereği, bu cihazdan çok fazla başarısız deneme yapıldı. <br><br>
+    Erişim kalıcı olarak engellendi.
+  </div>
+</div>
 
-    document.body.addEventListener('click', () => {
-      if (!audioInitialized) {
-        audioInitialized = true;
-        ambientSound.volume = 0.2;
-        ambientSound.play().catch(e => console.log("Ses engellendi: ", e));
-      }
-    }, { once: true });
+<!-- 4. UYGULAMA (KÜTÜPHANE) -->
+<div class="screen" id="app-screen">
+  <header>
+    <div class="logo">Bdugrhan <div class="logo-dot"></div></div>
+    <div class="header-actions">
+      <div class="storage-widget">
+        <div class="storage-text">
+          <span>KOTA: <strong id="storageQuota">...</strong></span>
+          <span>KULLANILAN: <strong id="storageUsed">0 B</strong></span>
+        </div>
+        <div class="storage-bar-bg"><div class="storage-bar-fill" id="storageBar"></div></div>
+      </div>
+      <button class="btn-lock" onclick="lockSystem()">Sistemi Kilitle</button>
+    </div>
+  </header>
 
-    // --- 1. CANLI SAAT VE TARİH ---
-    function updateClock() {
-      const now = new Date();
-      const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
-      const istanbulTime = new Date(utc + (3600000 * 3));
+  <div id="library-section" style="width:100%;">
+    <div id="progress-container">
+      <div class="progress-label"><span id="progressFileName">Şifreleniyor ve Yükleniyor...</span><span id="progressPercent">0%</span></div>
+      <div class="progress-bar-bg"><div class="progress-bar-fill" id="progressBar"></div></div>
+    </div>
 
-      const hours = String(istanbulTime.getHours()).padStart(2, '0');
-      const minutes = String(istanbulTime.getMinutes()).padStart(2, '0');
+    <div class="dropzone" id="dropzone">
+      <input type="file" id="fileInput" multiple>
+      <div class="dropzone-icon">↓</div>
+      <h3>Dosyaları sürükle veya tıkla</h3>
+      <p>AES-256 ile şifrelenerek saklanır. (Sınırsız)</p>
+    </div>
+
+    <div class="file-list-header">
+      <h2>Yüklenen Dosyalar</h2>
+      <span class="file-count" id="fileCount">0 dosya</span>
+    </div>
+    <div id="file-list"></div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<!-- Önizleme Modalı -->
+<div id="preview-modal">
+  <div class="preview-content">
+    <div class="preview-header">
+      <div class="preview-header-left">
+        <h3 id="preview-title">Dosya Adı</h3>
+        <span id="preview-info">Boyut</span>
+      </div>
+      <button class="btn-back" onclick="closePreview()">← Geri Dön</button>
+    </div>
+    <div class="preview-body" id="preview-body"></div>
+  </div>
+</div>
+
+<script>
+  // ================= ZERO TRUST & ENCRYPTION =================
+  const SECRET_HASH = "QnVyYWhhbiEyNzU4Mjc1ODAwMzc0NjI1OTczNjQ="; // Burahan!275827580037462597364
+  const DB_NAME = 'Bdugrhan_AES_Encrypted';
+  const STORE_NAME = 'files';
+  const MAX_ATTEMPTS = 4;
+
+  let db = null;
+  let masterKey = null; // Dosyaları şifrelemek/çözmek için kullanılacak anahtar
+
+  // 1. Cihaz Parmak İzi (Fingerprint)
+  function generateFingerprint() {
+    const nav = window.navigator;
+    const screen = window.screen;
+    const raw = nav.userAgent + screen.width + screen.height + screen.colorDepth + nav.language + nav.hardwareConcurrency;
+    let hash = 0;
+    for (let i = 0; i < raw.length; i++) {
+      const char = raw.charCodeAt(i);
+      hash = ((hash << 5) - hash) + char;
+      hash = hash & hash;
+    }
+    return Math.abs(hash).toString(16).toUpperCase();
+  }
+
+  const DEVICE_ID = generateFingerprint();
+  document.getElementById('fingerprint-text').innerText = DEVICE_ID;
+
+  let attempts = parseInt(localStorage.getItem('zt_attempts_' + DEVICE_ID) || '0');
+  document.getElementById('attempts-count').innerText = MAX_ATTEMPTS - attempts;
+
+  if (attempts >= MAX_ATTEMPTS) {
+    document.getElementById('welcome-screen').classList.remove('active');
+    document.getElementById('blocked-screen').classList.add('active');
+  }
+
+  // Sağ Tık ve Kısayol Engelleme (Basit Caydırıcı)
+  document.addEventListener('contextmenu', e => e.preventDefault());
+  document.addEventListener('keydown', e => {
+    if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key === 'I') || (e.ctrlKey && e.key === 'u')) {
+      e.preventDefault();
+    }
+  });
+
+  // 2. Crypto API (Şifreleme Motoru)
+  async function deriveKey(password) {
+    const enc = new TextEncoder();
+    const keyMaterial = await crypto.subtle.importKey(
+      "raw", enc.encode(password), { name: "PBKDF2" }, false, ["deriveBits", "deriveKey"]
+    );
+    // Tuz (Salt) değeri cihaza özel olsun ki her cihazda farklı anahtar üretsin
+    const salt = enc.encode(DEVICE_ID); 
+    return crypto.subtle.deriveKey(
+      { name: "PBKDF2", salt: salt, iterations: 100000, hash: "SHA-256" },
+      keyMaterial,
+      { name: "AES-GCM", length: 256 },
+      false,
+      ["encrypt", "decrypt"]
+    );
+  }
+
+  async function encryptData(data, key) {
+    const iv = crypto.getRandomValues(new Uint8Array(12));
+    const ciphertext = await crypto.subtle.encrypt({ name: "AES-GCM", iv }, key, data);
+    return { iv, ciphertext };
+  }
+
+  async function decryptData(ciphertext, iv, key) {
+    return await crypto.subtle.decrypt({ name: "AES-GCM", iv }, key, ciphertext);
+  }
+
+  // 3. Ekran Geçişleri
+  function goToAuth() {
+    if (attempts >= MAX_ATTEMPTS) return;
+    document.getElementById('welcome-screen').classList.remove('active');
+    document.getElementById('auth-screen').classList.add('active');
+    setTimeout(() => document.getElementById('auth-code').focus(), 100);
+  }
+
+  // 4. Kimlik Doğrulama
+  async function verifyAuth() {
+    const input = document.getElementById('auth-code').value;
+    const errorMsg = document.getElementById('error-msg');
+    const btn = document.getElementById('submit-btn');
+
+    // Girdiyi Base64 ile karşılaştır
+    if (btoa(input) === SECRET_HASH) {
+      errorMsg.innerText = "";
+      document.getElementById('device-status').innerText = "DOĞRULANDI";
+      document.getElementById('device-status').style.background = "rgba(255,255,255,0.1)";
       
-      document.getElementById('clockTime').innerHTML = `${hours}<span class="colon">:</span>${minutes}`;
+      // Şifreleme Anahtarını üret
+      masterKey = await deriveKey(input);
+      
+      localStorage.setItem('zt_attempts_' + DEVICE_ID, '0');
+      
+      setTimeout(() => {
+        document.getElementById('auth-screen').classList.remove('active');
+        document.getElementById('app-screen').classList.add('active');
+        initApp();
+      }, 500);
 
-      const options = { day: 'numeric', month: 'long', year: 'numeric', weekday: 'long' };
-      let dateString = istanbulTime.toLocaleDateString('tr-TR', options);
-      document.getElementById('clockDate').innerText = dateString;
-    }
-    setInterval(updateClock, 1000);
-    updateClock();
+    } else {
+      attempts++;
+      localStorage.setItem('zt_attempts_' + DEVICE_ID, attempts);
+      const remaining = MAX_ATTEMPTS - attempts;
+      document.getElementById('attempts-count').innerText = remaining;
 
-    // --- 2. DURUM VE SAAT MANTIĞI ---
-    const statusContainer = document.getElementById('statusContainer');
-    
-    function getStatusAndTime() {
-      const now = new Date();
-      const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
-      const istanbulTime = new Date(utc + (3600000 * 3));
-
-      const day = istanbulTime.getDay();
-      const isWeekend = (day === 0 || day === 6);
-      const currentTimeInMinutes = (istanbulTime.getHours() * 60) + istanbulTime.getMinutes();
-
-      const startTime = isWeekend ? (9 * 60) + 30 : (15 * 60) + 30; 
-      const endTime = (22 * 60); 
-      const startString = isWeekend ? "09:30" : "15:30";
-
-      if (currentTimeInMinutes >= startTime && currentTimeInMinutes <= endTime) {
-        return `
-          <div class="status-title status-online">
-            <div class="dot-online"></div> Buğrahan şu an çevrimiçi
-          </div>
-          <div class="status-sub">(İstanbul Saati: ${startString} - 22:00 arası buradayım)</div>
-        `;
+      if (attempts >= MAX_ATTEMPTS) {
+        errorMsg.innerText = "Kritik Hata: Cihaz kilitleniyor...";
+        btn.disabled = true;
+        setTimeout(() => {
+          document.getElementById('auth-screen').classList.remove('active');
+          document.getElementById('blocked-screen').classList.add('active');
+        }, 800);
       } else {
-        let targetDate = new Date(istanbulTime);
-        targetDate.setHours(Math.floor(startTime / 60), startTime % 60, 0, 0);
-        if (currentTimeInMinutes >= startTime) targetDate.setDate(targetDate.getDate() + 1);
-
-        const diffMs = targetDate - istanbulTime;
-        const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
-        const diffMinutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
-
-        let timeString = diffHours > 0 ? `${diffHours} saat ${diffMinutes} dakika` : `${diffMinutes} dakika`;
-
-        return `
-          <div class="status-title status-offline">
-            <div class="dot-offline"></div> Buğrahan şu an çevrimdışı
-          </div>
-          <div class="countdown">En kısa sürede döneceğim. <br><strong>${timeString}</strong> sonra çevrimiçi olacağım.</div>
-        `;
+        errorMsg.innerText = "Hatalı kod!";
+        document.getElementById('auth-code').value = '';
+        const box = document.querySelector('.auth-box');
+        box.style.borderColor = "var(--danger)";
+        setTimeout(() => box.style.borderColor = "var(--border)", 500);
       }
     }
+  }
 
-    // --- 3. PARTİKÜL SİSTEMİ ---
-    const canvas = document.getElementById('particleCanvas');
-    const ctx = canvas.getContext('2d');
-    let width, height;
-    let particles = [];
-    let animationFrameId;
+  function handleEnter(e) {
+    if (e.key === 'Enter') verifyAuth();
+  }
 
-    function resize() {
-      width = canvas.width = window.innerWidth;
-      height = canvas.height = window.innerHeight;
-    }
-    resize();
-    window.addEventListener('resize', resize);
+  // 5. Sistem Kilitleme (Log out)
+  function lockSystem() {
+    masterKey = null; // Anahtarı bellekten sil
+    document.getElementById('app-screen').classList.remove('active');
+    document.getElementById('welcome-screen').classList.add('active');
+    document.getElementById('auth-code').value = '';
+    document.getElementById('file-list').innerHTML = ''; // Arayüzü temizle
+  }
 
-    class Particle {
-      constructor(x, y) {
-        this.x = x; this.y = y;
-        const angle = Math.random() * Math.PI * 2;
-        const speed = Math.random() * 10 + 2;
-        this.vx = Math.cos(angle) * speed;
-        this.vy = Math.sin(angle) * speed;
-        this.size = Math.random() * 2 + 0.5;
-        this.opacity = 1;
-        this.decay = Math.random() * 0.02 + 0.01; 
-      }
-      update() {
-        this.x += this.vx; this.y += this.vy;
-        this.vx *= 0.95; this.vy *= 0.95;
-        this.opacity -= this.decay;
-      }
-      draw() {
-        if (this.opacity <= 0) return;
-        ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
-        ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill();
-      }
-    }
-
-    function animate() {
-      ctx.clearRect(0, 0, width, height);
-      particles = particles.filter(p => p.opacity > 0);
-      particles.forEach(p => { p.update(); p.draw(); });
-      animationFrameId = requestAnimationFrame(animate);
-    }
-    animate();
-
-    function shatterText() {
-      const welcomeEl = document.getElementById('welcomeText');
-      const rect = welcomeEl.getBoundingClientRect();
-
-      shatterSound.volume = 0.5;
-      shatterSound.play().catch(() => {});
-
-      for (let i = 0; i < 1500; i++) {
-        const x = rect.left + Math.random() * rect.width;
-        const y = rect.top + Math.random() * rect.height;
-        particles.push(new Particle(x, y));
-      }
-      welcomeEl.classList.add('dissolve');
-    }
-
-    // --- 4. ZAMANLAMALAR ---
-    const cinematicIntro = document.getElementById('cinematicIntro');
-    const mainContent = document.getElementById('mainContent');
-    const welcomeBackText = document.getElementById('welcomeBackText');
-    let introFinished = false;
-
-    function finishIntro() {
-      if (introFinished) return;
-      introFinished = true;
-      cinematicIntro.classList.add('hidden');
-      mainContent.classList.add('visible');
-      document.body.style.overflow = 'auto';
-      cancelAnimationFrame(animationFrameId);
-      ambientSound.pause();
-    }
-
-    document.body.style.overflow = 'hidden';
-
-    setTimeout(() => { shatterText(); }, 2500);
-    setTimeout(() => { welcomeBackText.classList.add('show'); }, 5500);
-    setTimeout(() => { welcomeBackText.classList.add('vanish'); }, 7500);
-
-    setTimeout(() => {
-      systemSound.volume = 0.6;
-      systemSound.play().catch(() => {});
-      statusContainer.innerHTML = getStatusAndTime();
-      statusContainer.classList.add('show');
-    }, 8500);
-
-    setTimeout(finishIntro, 13000);
-
-    // --- 5. SCROLL REVEAL ---
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('active');
-          observer.unobserve(entry.target);
+  // ================= INDEXEDDB KURULUMU =================
+  function openDB() {
+    return new Promise((resolve, reject) => {
+      const request = indexedDB.open(DB_NAME, 1);
+      request.onupgradeneeded = (e) => {
+        if (!e.target.result.objectStoreNames.contains(STORE_NAME)) {
+          e.target.result.createObjectStore(STORE_NAME, { keyPath: 'id' });
         }
-      });
-    }, { threshold: 0.15 });
-    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
-  </script>
+      };
+      request.onsuccess = (e) => { db = e.target.result; resolve(db); };
+      request.onerror = (e) => reject(e.target.error);
+    });
+  }
+
+  const addFileToDB = (fileObj) => new Promise((res, rej) => {
+    const tx = db.transaction(STORE_NAME, 'readwrite');
+    const req = tx.objectStore(STORE_NAME).add(fileObj);
+    req.onsuccess = () => res(); req.onerror = () => rej(req.error);
+  });
+
+  const getAllFiles = () => new Promise((res, rej) => {
+    const tx = db.transaction(STORE_NAME, 'readonly');
+    const req = tx.objectStore(STORE_NAME).getAll();
+    req.onsuccess = () => res(req.result || []); req.onerror = () => rej(req.error);
+  });
+
+  const deleteFileFromDB = (id) => new Promise((res, rej) => {
+    const tx = db.transaction(STORE_NAME, 'readwrite');
+    const req = tx.objectStore(STORE_NAME).delete(id);
+    req.onsuccess = () => res(); req.onerror = () => rej(req.error);
+  });
+
+  async function updateStorageInfo() {
+    if (!navigator.storage || !navigator.storage.estimate) return;
+    try {
+      const estimate = await navigator.storage.estimate();
+      const files = await getAllFiles();
+      const usedByApp = files.reduce((sum, f) => sum + (f.size || 0), 0);
+      document.getElementById('storageQuota').innerText = formatSize(estimate.quota);
+      document.getElementById('storageUsed').innerText = formatSize(usedByApp);
+      document.getElementById('storageBar').style.width = Math.min((usedByApp / estimate.quota) * 100, 100) + '%';
+    } catch (e) {}
+  }
+
+  if (navigator.storage && navigator.storage.persist) navigator.storage.persist();
+
+  // UI Elementleri
+  const dropzone = document.getElementById('dropzone');
+  const fileInput = document.getElementById('fileInput');
+  const fileList = document.getElementById('file-list');
+  const fileCount = document.getElementById('fileCount');
+  const toast = document.getElementById('toast');
+  const previewModal = document.getElementById('preview-modal');
+  const previewBody = document.getElementById('preview-body');
+  const progressContainer = document.getElementById('progress-container');
+  const progressBar = document.getElementById('progressBar');
+  const progressPercent = document.getElementById('progressPercent');
+  const progressFileName = document.getElementById('progressFileName');
+
+  let currentFiles = [];
+
+  async function initApp() {
+    await openDB();
+    await updateStorageInfo();
+    await loadFiles();
+  }
+
+  function showToast(msg, isError = false) {
+    toast.innerText = msg;
+    toast.className = isError ? 'show error' : 'show';
+    clearTimeout(window.toastTimer);
+    window.toastTimer = setTimeout(() => toast.classList.remove('show'), 3000);
+  }
+
+  function formatSize(bytes) {
+    if (!bytes) return '0 B';
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+    if (bytes < 1073741824) return (bytes / 1048576).toFixed(1) + ' MB';
+    return (bytes / 1073741824).toFixed(2) + ' GB';
+  }
+
+  // ================= YÜKLEME VE ŞİFRELEME =================
+  dropzone.addEventListener('click', () => fileInput.click());
+  dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('dragover'); });
+  dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
+  dropzone.addEventListener('drop', (e) => {
+    e.preventDefault(); dropzone.classList.remove('dragover');
+    if (e.dataTransfer.files.length > 0) handleFiles(e.dataTransfer.files);
+  });
+  fileInput.addEventListener('change', (e) => {
+    if (e.target.files.length > 0) handleFiles(e.target.files);
+    fileInput.value = '';
+  });
+
+  async function handleFiles(filesArray) {
+    if (!masterKey) return showToast("Önce sisteme giriş yapmalısın!", true);
+    
+    const files = Array.from(filesArray);
+    if (files.length === 0) return;
+
+    progressContainer.classList.add('show');
+    let totalSize = files.reduce((sum, f) => sum + f.size, 0);
+    let processedSize = 0;
+
+    for (const file of files) {
+      progressFileName.innerText = `Şifreleniyor: ${file.name}`;
+      
+      try {
+        const buffer = await file.arrayBuffer();
+        // Dosyayı AES-256-GCM ile şifrele
+        const { iv, ciphertext } = await encryptData(buffer, masterKey);
+        
+        const fileObj = {
+          id: Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+          name: file.name,
+          type: file.type || 'application/octet-stream',
+          size: file.size,
+          encryptedData: ciphertext, // Şifreli içerik
+          iv: iv,                    // Şifre çözme vektörü
+          createdAt: Date.now()
+        };
+
+        await addFileToDB(fileObj);
+        processedSize += file.size;
+        const percent = Math.round((processedSize / totalSize) * 100);
+        progressBar.style.width = percent + '%';
+        progressPercent.innerText = percent + '%';
+      } catch (e) {
+        console.error(e);
+        showToast(`${file.name} şifrelenemedi!`, true);
+      }
+    }
+
+    setTimeout(() => progressContainer.classList.remove('show'), 500);
+    progressBar.style.width = '0%';
+    progressPercent.innerText = '0%';
+    
+    await loadFiles();
+    await updateStorageInfo();
+    showToast(`${files.length} dosya şifrelenerek eklendi.`);
+  }
+
+  // ================= LİSTELEME =================
+  async function loadFiles() {
+    currentFiles = await getAllFiles();
+    currentFiles.sort((a, b) => b.createdAt - a.createdAt);
+    renderFiles();
+  }
+
+  function renderFiles() {
+    fileList.innerHTML = '';
+    fileCount.innerText = currentFiles.length + ' dosya';
+
+    if (currentFiles.length === 0) {
+      fileList.innerHTML = `<div class="empty-state">Kütüphane boş. Dosya ekle.</div>`;
+      return;
+    }
+
+    currentFiles.forEach(file => {
+      const card = document.createElement('div');
+      card.className = 'file-card';
+      
+      let ext = file.name.split('.').pop().toUpperCase();
+      if (ext.length > 5) ext = 'DOSYA';
+
+      card.innerHTML = `
+        <div class="file-icon-badge">${ext}</div>
+        <div class="file-name" title="${file.name}">${file.name}</div>
+        <div class="file-size">${formatSize(file.size)}</div>
+        <div class="file-actions">
+          <button class="btn-preview" onclick="previewFile('${file.id}')">Önizle</button>
+          <button class="btn-download" onclick="downloadFile('${file.id}')">İndir</button>
+          <button class="btn-delete" onclick="deleteFile('${file.id}')">Sil</button>
+        </div>
+      `;
+      fileList.appendChild(card);
+    });
+  }
+
+  // ================= ŞİFRE ÇÖZME VE İNDİRME =================
+  async function downloadFile(id) {
+    if (!masterKey) return;
+    const file = currentFiles.find(f => f.id === id);
+    if (!file) return;
+    
+    try {
+      const decryptedBuffer = await decryptData(file.encryptedData, file.iv, masterKey);
+      const blob = new Blob([decryptedBuffer], { type: file.type });
+      const url = URL.createObjectURL(blob);
+      
+      const a = document.createElement('a');
+      a.href = url; a.download = file.name;
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      showToast(`${file.name} çözüldü ve indiriliyor.`);
+    } catch (e) {
+      showToast("Dosya çözülemedi! Anahtar hatalı.", true);
+    }
+  }
+
+  async function deleteFile(id) {
+    if (!confirm('Dosya silinsin mi?')) return;
+    await deleteFileFromDB(id);
+    await loadFiles();
+    await updateStorageInfo();
+    showToast('Silindi.');
+  }
+
+  // ================= ÖNİZLEME (DECRYPT) =================
+  async function previewFile(id) {
+    if (!masterKey) return;
+    const file = currentFiles.find(f => f.id === id);
+    if (!file) return;
+
+    document.getElementById('preview-title').innerText = file.name;
+    document.getElementById('preview-info').innerText = `${formatSize(file.size)} | Şifreli Veri`;
+    previewBody.innerHTML = 'Deşifre ediliyor...';
+    previewModal.classList.add('active');
+
+    try {
+      // Şifreyi çöz
+      const decryptedBuffer = await decryptData(file.encryptedData, file.iv, masterKey);
+      
+      const isImage = file.type.startsWith('image/');
+      const isText = file.name.match(/\.(lua|py|js|html|css|json|txt|md|xml|sh|bat|c|cpp|h|java|php|rb|go|rs|cs|swift|kt|log|ini|cfg|yml|yaml)$/i) || file.type.includes('text');
+      const isVideo = file.type.startsWith('video/');
+      const isAudio = file.type.startsWith('audio/');
+      const isPDF = file.type === 'application/pdf';
+
+      if (isImage || isVideo || isAudio || isPDF) {
+        const blob = new Blob([decryptedBuffer], { type: file.type });
+        const url = URL.createObjectURL(blob);
+        previewBody.innerHTML = '';
+        
+        if (isImage) {
+          const img = document.createElement('img'); img.src = url; previewBody.appendChild(img);
+        } else if (isVideo) {
+          const video = document.createElement('video'); video.src = url; video.controls = true; video.style.maxWidth = '100%'; video.style.maxHeight = '100%'; previewBody.appendChild(video);
+        } else if (isAudio) {
+          const audio = document.createElement('audio'); audio.src = url; audio.controls = true; audio.style.width = '100%'; previewBody.appendChild(audio);
+        } else if (isPDF) {
+          const embed = document.createElement('iframe'); embed.src = url; embed.style.width = '100%'; embed.style.height = '100%'; embed.style.border = 'none'; previewBody.appendChild(embed);
+        }
+      } else if (isText) {
+        const decoder = new TextDecoder('utf-8');
+        const text = decoder.decode(decryptedBuffer);
+        const pre = document.createElement('pre');
+        pre.innerText = text;
+        previewBody.innerHTML = '';
+        previewBody.appendChild(pre);
+      } else {
+        previewBody.innerHTML = `<div class="preview-warning">Bu tür tarayıcıda önizlenemez. İndir butonunu kullanın.</div>`;
+      }
+    } catch (e) {
+      previewBody.innerHTML = `<div class="preview-warning" style="color:var(--danger)">Şifre çözülemedi! Veri bozuk veya anahtar hatalı.</div>`;
+    }
+  }
+
+  function closePreview() {
+    previewModal.classList.remove('active');
+    previewBody.innerHTML = '';
+  }
+
+  previewModal.addEventListener('click', (e) => {
+    if (e.target === previewModal) closePreview();
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && previewModal.classList.contains('active')) {
+      closePreview();
+    }
+  });
+
+</script>
 
 </body>
 </html>
