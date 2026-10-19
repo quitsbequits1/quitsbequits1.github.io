@@ -87,7 +87,6 @@
 
   #particleCanvas { position: absolute; inset: 0; z-index: 5; pointer-events: none; }
 
-  /* GELİŞMİŞ DURUM EKRANI */
   .status-container {
     position: absolute; z-index: 15; bottom: 80px;
     display: flex; flex-direction: column; gap: 12px;
@@ -168,7 +167,6 @@
     text-shadow: 0 0 10px rgba(234, 88, 12, 0.5);
   }
 
-  /* ================= ANA SİTE ================= */
   .main-content { opacity: 0; display: none; transition: opacity 1.5s ease; }
   .main-content.visible { opacity: 1; display: block; }
 
@@ -229,7 +227,9 @@
       <div class="clock-location">İSTANBUL, TR (UTC+3)</div>
     </div>
 
-    <div class="intro-welcome" id="welcomeText">Hoşgeldiniz</div>
+    <!-- DEĞİŞTİRİLEN YER: "Hoşgeldiniz" -> "Hoşgeldin" -->
+    <div class="intro-welcome" id="welcomeText">Hoşgeldin</div>
+    
     <div class="intro-welcome-back" id="welcomeBackText">Seni bekliyordum.</div>
 
     <canvas id="particleCanvas"></canvas>
@@ -327,7 +327,7 @@
     setInterval(updateClock, 1000);
     updateClock();
 
-    // --- 2. DURUM VE SAAT MANTIĞI (GÜNCELLENDİ) ---
+    // --- 2. DURUM VE SAAT MANTIĞI ---
     const statusContainer = document.getElementById('statusContainer');
     
     function getStatusAndTime() {
@@ -344,7 +344,6 @@
       const startString = isWeekend ? "09:30" : "15:30";
 
       if (currentTimeInMinutes >= startTime && currentTimeInMinutes <= endTime) {
-        // Çevrimiçi
         return `
           <div class="status-title status-online">
             <div class="dot-online"></div> Buğrahan şu an çevrimiçi
@@ -352,7 +351,6 @@
           <div class="status-sub">(İstanbul Saati: ${startString} - 22:00 arası buradayım)</div>
         `;
       } else {
-        // Çevrimdışı
         let targetDate = new Date(istanbulTime);
         targetDate.setHours(Math.floor(startTime / 60), startTime % 60, 0, 0);
         if (currentTimeInMinutes >= startTime) targetDate.setDate(targetDate.getDate() + 1);
